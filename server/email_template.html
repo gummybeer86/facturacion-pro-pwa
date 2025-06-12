@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido a ChapaMarket</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+        .logo-studio {
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #1a1a2e;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        .license-info {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .license-key {
+            font-family: monospace;
+            font-size: 18px;
+            color: #2c5282;
+            background-color: #ebf8ff;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            margin: 10px 0;
+        }
+        .instructions {
+            background: #e6f3ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .instructions ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        .contact {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+        .contact p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .contact a {
+            color: #1a1a2e;
+            text-decoration: none;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="images/chapamarket-logo.png" alt="ChapaMarket Logo" class="logo">
+            <img src="images/logo-createstudio.png" alt="Create Studio Digital" class="logo-studio">
+            <h1>¡Bienvenido a ChapaMarket!</h1>
+        </div>
+
+        <p>Hola {client_name},</p>
+        
+        <p>Gracias por elegir ChapaMarket. Tu licencia ha sido generada exitosamente.</p>
+
+        <div class="license-info">
+            <h2>Detalles de tu licencia:</h2>
+            <p><strong>Tipo de licencia:</strong> {license_type}</p>
+            <p><strong>Fecha de expiración:</strong> {expiry_date}</p>
+            <p><strong>Tu clave de licencia:</strong></p>
+            <div class="license-key">{license_key}</div>
+        </div>
+
+        <p>Para activar tu licencia, simplemente copia y pega la clave de licencia en el programa.</p>
+
+        <div class="instructions">
+            <h2>Instrucciones de Activación</h2>
+            <ol>
+                <li>Descarga la herramienta de diagnóstico desde nuestra página web</li>
+                <li>Ejecuta la herramienta de diagnóstico</li>
+                <li>Ingresa tu licencia cuando se te solicite</li>
+                <li>¡Listo! Ya puedes comenzar a usar ChapaMarket</li>
+            </ol>
+        </div>
+
+        <div class="contact">
+            <h2>¿Necesitas ayuda?</h2>
+            <p>Estamos aquí para ayudarte:</p>
+            <p>📱 WhatsApp: <a href="https://wa.me/5217731086826">773-108-6826</a> | <a href="https://wa.me/5217631093925">763-109-3925</a></p>
+            <p>📧 Email: <a href="mailto:chapmarket@createstudiodigital.com.mx">chapmarket@createstudiodigital.com.mx</a></p>
+            <p>🌐 Web: <a href="https://www.createstudiodigital.com.mx">www.createstudiodigital.com.mx</a></p>
+        </div>
+
+        <div class="footer">
+            <p>© 2025 ChapaMarket - Create Studio Digital</p>
+            <p>Chapantongo, Hidalgo, México</p>
+            <p>ING. César Sánchez</p>
+        </div>
+    </div>
+</body>
+</html> 

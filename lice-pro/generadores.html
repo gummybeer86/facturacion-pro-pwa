@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generadores e Instaladores - CHAPAMARKET</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            color: white;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 20px;
+            color: #a0aec0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .tool-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .tool-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .tool-title {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #ff6b35;
+        }
+        
+        .tool-description {
+            color: #a0aec0;
+            margin-bottom: 25px;
+        }
+        
+        .tool-btn {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .tool-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 107, 53, 0.3);
+        }
+        
+        .back-link {
+            display: inline-block;
+            color: #a0aec0;
+            text-decoration: none;
+            margin-top: 40px;
+            transition: color 0.3s ease;
+        }
+        
+        .back-link:hover {
+            color: #ff6b35;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 36px; }
+            .header p { font-size: 18px; }
+            .tools-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛠️ Herramientas CHAPAMARKET</h1>
+            <p>Accede a nuestros generadores e instaladores para potenciar tu experiencia con CHAPAMARKET Enterprise</p>
+        </div>
+        
+        <div class="tools-grid">
+            <div class="tool-card">
+                <div class="tool-icon">🔑</div>
+                <h3 class="tool-title">Generador de Licencias</h3>
+                <p class="tool-description">Crea y gestiona licencias para tus clientes de forma segura y eficiente</p>
+                <a href="licencias.html" class="tool-btn">Acceder al Generador</a>
+            </div>
+            
+            <div class="tool-card">
+                <div class="tool-icon">📥</div>
+                <h3 class="tool-title">Instalador Principal</h3>
+                <p class="tool-description">Descarga e instala la versión completa de CHAPAMARKET Enterprise</p>
+                <a href="install.html" class="tool-btn">Descargar Ahora</a>
+            </div>
+            
+            <div class="tool-card">
+                <div class="tool-icon">🔍</div>
+                <h3 class="tool-title">Verificador de Licencias</h3>
+                <p class="tool-description">Valida y verifica el estado de las licencias de tus clientes</p>
+                <a href="verificar-licencia.html" class="tool-btn">Verificar Licencia</a>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="index.html" class="back-link">← Volver al inicio</a>
+        </div>
+    </div>
+</body>
+</html> 

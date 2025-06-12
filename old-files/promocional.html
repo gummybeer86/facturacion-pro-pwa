@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Studio Digital - Software Profesional</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Software Cards */
+        .software-section {
+            padding: 4rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 3rem;
+            color: #2c3e50;
+        }
+
+        .software-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .software-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .software-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .card-image {
+            height: 200px;
+            background: linear-gradient(45deg, #f0f2f5, #e9ecef);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: #6c757d;
+            border-bottom: 1px solid #e9ecef;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* AQUÍ VAN TUS IMÁGENES */
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .software-card:hover .card-image img {
+            transform: scale(1.05);
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .card-description {
+            color: #6c757d;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .features-list {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .features-list li {
+            padding: 0.3rem 0;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .features-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .price-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #e74c3c;
+        }
+
+        .price-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .buy-button {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .buy-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .contact-item {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .contact-item h3 {
+            margin-bottom: 0.5rem;
+            color: #3498db;
+        }
+
+        /* Payment Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .payment-form {
+            margin-top: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .payment-method {
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-method:hover,
+        .payment-method.selected {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .submit-payment {
+            width: 100%;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .software-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+            }
+        }
+
+        /* Badge */
+        .badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #e74c3c;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge.popular {
+            background: #f39c12;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1>Create Studio Digital</h1>
+            <p>Software Profesional para tu Negocio - ING. César Sánchez</p>
+        </div>
+    </header>
+
+    <!-- Software Section -->
+    <section class="software-section">
+        <div class="container">
+            <h2 class="section-title">Nuestros Productos</h2>
+            
+            <div class="software-grid">
+                <!-- ChapaMarket Facturas -->
+                <div class="software-card">
+                    <div class="badge popular">MÁS VENDIDO</div>
+                    <div class="card-image">
+                        <!-- AQUÍ VA TU IMAGEN: chapamarket-screenshot.jpg -->
+                        <img src="chapamarket-screenshot.jpg" alt="ChapaMarket Facturas" style="display: none;">
+                        <div>📊 Imagen: chapamarket-screenshot.jpg</div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">ChapaMarket Facturas</h3>
+                        <p class="card-description">
+                            Sistema completo de facturación electrónica CFDI 4.0 con integración directa al SAT.
+                        </p>
+                        <ul class="features-list">
+                            <li>Facturación CFDI 4.0 completa</li>
+                            <li>Integración automática con SAT</li>
+                            <li>Gestión de clientes y productos</li>
+                            <li>Reportes financieros detallados</li>
+                            <li>Soporte técnico incluido</li>
+                        </ul>
+                        <div class="price-section">
+                            <div>
+                                <div class="price">$2,500 MXN</div>
+                                <div class="price-label">Licencia anual</div>
+                            </div>
+                        </div>
+                        <button class="buy-button" onclick="openPaymentModal('ChapaMarket Facturas', 2500)">
+                            Comprar Ahora
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Key Manager -->
+                <div class="software-card">
+                    <div class="badge">NUEVO</div>
+                    <div class="card-image">
+                        <!-- AQUÍ VA TU IMAGEN: keymanager-screenshot.jpg -->
+                        <img src="keymanager-screenshot.jpg" alt="Key Manager" style="display: none;">
+                        <div>🔑 Imagen: keymanager-screenshot.jpg</div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Key Manager Pro</h3>
+                        <p class="card-description">
+                            Sistema profesional de gestión y generación de licencias para desarrolladores de software.
+                        </p>
+                        <ul class="features-list">
+                            <li>Generación de licencias seguras</li>
+                            <li>Validación y activación automática</li>
+                            <li>Panel de administración completo</li>
+                            <li>Reportes de uso y estadísticas</li>
+                            <li>API para integración</li>
+                        </ul>
+                        <div class="price-section">
+                            <div>
+                                <div class="price">$1,800 MXN</div>
+                                <div class="price-label">Licencia anual</div>
+                            </div>
+                        </div>
+                        <button class="buy-button" onclick="openPaymentModal('Key Manager Pro', 1800)">
+                            Comprar Ahora
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Paquete Completo -->
+                <div class="software-card">
+                    <div class="badge">OFERTA</div>
+                    <div class="card-image">
+                        <!-- AQUÍ VA TU IMAGEN: paquete-completo.jpg -->
+                        <img src="paquete-completo.jpg" alt="Paquete Completo" style="display: none;">
+                        <div>📦 Imagen: paquete-completo.jpg</div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Paquete Completo</h3>
+                        <p class="card-description">
+                            Obtén ambos softwares con un descuento especial. Ideal para desarrolladores y empresas.
+                        </p>
+                        <ul class="features-list">
+                            <li>ChapaMarket Facturas completo</li>
+                            <li>Key Manager Pro completo</li>
+                            <li>Soporte prioritario</li>
+                            <li>Actualizaciones gratuitas</li>
+                            <li>Instalación y configuración</li>
+                        </ul>
+                        <div class="price-section">
+                            <div>
+                                <div class="price">$3,500 MXN</div>
+                                <div class="price-label">Ahorra $800 MXN</div>
+                            </div>
+                        </div>
+                        <button class="buy-button" onclick="openPaymentModal('Paquete Completo', 3500)">
+                            Comprar Paquete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <h2>Contacto y Soporte</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <h3>WhatsApp</h3>
+                    <p>773-108-6826<br>763-109-3925</p>
+                </div>
+                <div class="contact-item">
+                    <h3>Email</h3>
+                    <p>kashtaman@createstudiodigital.com</p>
+                </div>
+                <div class="contact-item">
+                    <h3>Soporte</h3>
+                    <p>Lunes a Viernes<br>9:00 AM - 6:00 PM</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePaymentModal()">&times;</span>
+            <h2>Completar Compra</h2>
+            <div id="productInfo"></div>
+            
+            <form class="payment-form" onsubmit="processPayment(event)">
+                <div class="form-group">
+                    <label for="customerName">Nombre Completo:</label>
+                    <input type="text" id="customerName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="customerEmail">Email:</label>
+                    <input type="email" id="customerEmail" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="customerPhone">Teléfono:</label>
+                    <input type="tel" id="customerPhone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Método de Pago:</label>
+                    <div class="payment-methods">
+                        <div class="payment-method" onclick="selectPaymentMethod('oxxo')">
+                            <div>🏪</div>
+                            <div>OXXO</div>
+                        </div>
+                        <div class="payment-method" onclick="selectPaymentMethod('transfer')">
+                            <div>🏦</div>
+                            <div>Transferencia</div>
+                        </div>
+                        <div class="payment-method" onclick="selectPaymentMethod('paypal')">
+                            <div>💳</div>
+                            <div>PayPal</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-payment">
+                    Procesar Pago
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let selectedProduct = '';
+        let selectedPrice = 0;
+        let selectedPaymentMethod = '';
+
+        function openPaymentModal(product, price) {
+            selectedProduct = product;
+            selectedPrice = price;
+            
+            document.getElementById('productInfo').innerHTML = `
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <h3>${product}</h3>
+                    <p style="font-size: 1.2rem; color: #e74c3c; font-weight: bold;">$${price.toLocaleString()} MXN</p>
+                </div>
+            `;
+            
+            document.getElementById('paymentModal').style.display = 'block';
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+        }
+
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+            
+            // Remove selected class from all methods
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked method
+            event.currentTarget.classList.add('selected');
+        }
+
+        function processPayment(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('customerName').value;
+            const email = document.getElementById('customerEmail').value;
+            const phone = document.getElementById('customerPhone').value;
+            
+            if (!selectedPaymentMethod) {
+                alert('Por favor selecciona un método de pago');
+                return;
+            }
+            
+            // Aquí puedes integrar con tu sistema de pagos real
+            alert(`¡Gracias ${name}! Tu pedido de ${selectedProduct} ha sido procesado. Te contactaremos al ${phone} para completar el pago por ${selectedPaymentMethod}.`);
+            
+            // Enviar información por WhatsApp (opcional)
+            const whatsappMessage = `Nuevo pedido:%0A- Producto: ${selectedProduct}%0A- Precio: $${selectedPrice}%0A- Cliente: ${name}%0A- Email: ${email}%0A- Teléfono: ${phone}%0A- Método: ${selectedPaymentMethod}`;
+            window.open(`https://wa.me/7731086826?text=${whatsappMessage}`, '_blank');
+            
+            closePaymentModal();
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('paymentModal');
+            if (event.target == modal) {
+                closePaymentModal();
+            }
+        }
+    </script>
+</body>
+</html>

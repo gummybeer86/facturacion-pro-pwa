@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChapaMarket Facturas - Sistema CFDI 4.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6fa;
+            color: #2c3e50;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            text-align: center;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: white;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-tab.active {
+            background: #3498db;
+            color: white;
+            border-bottom-color: #2980b9;
+        }
+
+        .nav-tab:hover {
+            background: #ecf0f1;
+        }
+
+        .nav-tab.active:hover {
+            background: #2980b9;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .table th {
+            background: #34495e;
+            color: white;
+            font-weight: 600;
+        }
+
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid #3498db;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .invoice-preview {
+            background: #f8f9fa;
+            border: 2px dashed #bdc3c7;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            min-height: 300px;
+        }
+
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .company-info h3 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .invoice-number {
+            text-align: right;
+        }
+
+        .invoice-number h4 {
+            color: #e74c3c;
+            font-size: 1.2rem;
+        }
+
+        .client-info {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .items-table {
+            background: white;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .total-section {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            text-align: right;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .invoice-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        .floating-help {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #27ae60;
+            color: white;
+            border-radius: 50px;
+            padding: 15px 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+
+        .floating-help:hover {
+            background: #229954;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧾 ChapaMarket Facturas</h1>
+        <p>Sistema Completo de Facturación Electrónica CFDI 4.0 - México</p>
+    </div>
+
+    <div class="container">
+        <!-- Navegación -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
+            <button class="nav-tab" onclick="showTab('nueva-factura')">📄 Nueva Factura</button>
+            <button class="nav-tab" onclick="showTab('clientes')">👥 Clientes</button>
+            <button class="nav-tab" onclick="showTab('productos')">📦 Productos</button>
+            <button class="nav-tab" onclick="showTab('reportes')">📈 Reportes</button>
+            <button class="nav-tab" onclick="showTab('configuracion')">⚙️ Configuración</button>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" class="tab-content active">
+            <div class="alert alert-info">
+                <strong>¡Bienvenido a ChapaMarket Facturas!</strong> Sistema completo para facturación electrónica en México.
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalFacturas">0</div>
+                    <div class="stat-label">Facturas Emitidas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalClientes">0</div>
+                    <div class="stat-label">Clientes Registrados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalVentas">$0</div>
+                    <div class="stat-label">Ventas del Mes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="facturasPendientes">0</div>
+                    <div class="stat-label">Facturas Pendientes</div>
+                </div>
+            </div>
+
+            <h3>📋 Últimas Facturas</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Folio</th>
+                        <th>Cliente</th>
+                        <th>Fecha</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="facturasRecientes">
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: #7f8c8d;">No hay facturas registradas</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Nueva Factura -->
+        <div id="nueva-factura" class="tab-content">
+            <h2>📄 Crear Nueva Factura</h2>
+            
+            <div class="alert alert-warning">
+                <strong>Importante:</strong> Asegúrate de tener configurados tus datos fiscales en la sección de configuración.
+            </div>
+
+            <form id="facturaForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="clienteSelect">Cliente:</label>
+                        <select id="clienteSelect" required>
+                            <option value="">Seleccionar cliente...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fechaFactura">Fecha:</label>
+                        <input type="date" id="fechaFactura" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="metodoPago">Método de Pago:</label>
+                        <select id="metodoPago" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="01">Efectivo</option>
+                            <option value="02">Cheque nominativo</option>
+                            <option value="03">Transferencia electrónica</option>
+                            <option value="04">Tarjeta de crédito</option>
+                            <option value="28">Tarjeta de débito</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="usoCFDI">Uso CFDI:</label>
+                        <select id="usoCFDI" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="G01">Adquisición de mercancías</option>
+                            <option value="G02">Devoluciones, descuentos o bonificaciones</option>
+                            <option value="G03">Gastos en general</option>
+                            <option value="I01">Construcciones</option>
+                            <option value="P01">Por definir</option>
+                        </select>
+                    </div>
+                </div>
+
+                <h3>📦 Productos/Servicios</h3>
+                <div id="productosFactura">
+                    <div class="form-grid producto-item">
+                        <div class="form-group">
+                            <label>Producto/Servicio:</label>
+                            <select class="producto-select" required>
+                                <option value="">Seleccionar...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Cantidad:</label>
+                            <input type="number" class="cantidad" min="1" value="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Precio Unitario:</label>
+                            <input type="number" class="precio" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Total:</label>
+                            <input type="number" class="total-item" step="0.01" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-primary" onclick="agregarProducto()">➕ Agregar Producto</button>
+
+                <div class="invoice-preview">
+                    <div class="invoice-header">
+                        <div class="company-info">
+                            <h3>Tu Empresa</h3>
+                            <p>RFC: XAXX010101000</p>
+                            <p>Dirección fiscal</p>
+                        </div>
+                        <div class="invoice-number">
+                            <h4>FACTURA</h4>
+                            <p>Folio: <span id="folioPreview">F-001</span></p>
+                            <p>Fecha: <span id="fechaPreview">--/--/----</span></p>
+                        </div>
+                    </div>
+
+                    <div class="client-info">
+                        <h4>Facturar a:</h4>
+                        <div id="clientePreview">Selecciona un cliente</div>
+                    </div>
+
+                    <div class="items-table">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Descripción</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="itemsPreview">
+                                <tr>
+                                    <td colspan="4" style="text-align: center;">No hay productos agregados</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="total-section">
+                        <div>Subtotal: $<span id="subtotalPreview">0.00</span></div>
+                        <div>IVA (16%): $<span id="ivaPreview">0.00</span></div>
+                        <div style="font-size: 1.2rem; font-weight: bold;">Total: $<span id="totalPreview">0.00</span></div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button type="submit" class="btn btn-success">💾 Generar Factura</button>
+                    <button type="button" class="btn btn-primary" onclick="previsualizarFactura()">👁️ Vista Previa</button>
+                    <button type="reset" class="btn btn-danger">🗑️ Limpiar</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Clientes -->
+        <div id="clientes" class="tab-content">
+            <h2>👥 Gestión de Clientes</h2>
+            
+            <button class="btn btn-primary" onclick="mostrarFormularioCliente()">➕ Nuevo Cliente</button>
+
+            <div id="formularioCliente" style="display: none; margin-top: 20px;">
+                <h3>Agregar Nuevo Cliente</h3>
+                <form id="clienteForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="clienteNombre">Razón Social:</label>
+                            <input type="text" id="clienteNombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="clienteRFC">RFC:</label>
+                            <input type="text" id="clienteRFC" required maxlength="13">
+                        </div>
+                        <div class="form-group">
+                            <label for="clienteEmail">Email:</label>
+                            <input type="email" id="clienteEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="clienteTelefono">Teléfono:</label>
+                            <input type="tel" id="clienteTelefono">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="clienteDireccion">Dirección:</label>
+                        <textarea id="clienteDireccion" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">💾 Guardar Cliente</button>
+                    <button type="button" class="btn btn-danger" onclick="cancelarCliente()">❌ Cancelar</button>
+                </form>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Razón Social</th>
+                        <th>RFC</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaClientes">
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #7f8c8d;">No hay clientes registrados</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Productos -->
+        <div id="productos" class="tab-content">
+            <h2>📦 Catálogo de Productos</h2>
+            
+            <button class="btn btn-primary" onclick="mostrarFormularioProducto()">➕ Nuevo Producto</button>
+
+            <div id="formularioProducto" style="display: none; margin-top: 20px;">
+                <h3>Agregar Nuevo Producto</h3>
+                <form id="productoForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="productoCodigo">Código:</label>
+                            <input type="text" id="productoCodigo" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productoNombre">Nombre:</label>
+                            <input type="text" id="productoNombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productoPrecio">Precio:</label>
+                            <input type="number" id="productoPrecio" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productoUnidad">Unidad:</label>
+                            <select id="productoUnidad" required>
+                                <option value="PZA">Pieza</option>
+                                <option value="KG">Kilogramo</option>
+                                <option value="LT">Litro</option>
+                                <option value="M">Metro</option>
+                                <option value="SRV">Servicio</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="productoDescripcion">Descripción:</label>
+                        <textarea id="productoDescripcion" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">💾 Guardar Producto</button>
+                    <button type="button" class="btn btn-danger" onclick="cancelarProducto()">❌ Cancelar</button>
+                </form>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Unidad</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaProductos">
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #7f8c8d;">No hay productos registrados</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Reportes -->
+        <div id="reportes" class="tab-content">
+            <h2>📈 Reportes y Estadísticas</h2>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="reporteFechaInicio">Fecha Inicio:</label>
+                    <input type="date" id="reporteFechaInicio">
+                </div>
+                <div class="form-group">
+                    <label for="reporteFechaFin">Fecha Fin:</label>
+                    <input type="date" id="reporteFechaFin">
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary" onclick="generarReporte()">📊 Generar Reporte</button>
+                </div>
+            </div>
+
+            <div id="reporteResultados">
+                <div class="alert alert-info">
+                    Selecciona un rango de fechas y haz clic en "Generar Reporte" para ver las estadísticas.
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuración -->
+        <div id="configuracion" class="tab-content">
+            <h2>⚙️ Configuración del Sistema</h2>
+            
+            <div class="alert alert-warning">
+                <strong>Importante:</strong> Configura correctamente tus datos fiscales para cumplir con el SAT.
+            </div>
+
+            <form id="configuracionForm">
+                <h3>🏢 Datos de la Empresa</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="empresaNombre">Razón Social:</label>
+                        <input type="text" id="empresaNombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="empresaRFC">RFC:</label>
+                        <input type="text" id="empresaRFC" required maxlength="13">
+                    </div>
+                    <div class="form-group">
+                        <label for="empresaRegimen">Régimen Fiscal:</label>
+                        <select id="empresaRegimen" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="601">General de Ley Personas Morales</option>
+                            <option value="603">Personas Morales con Fines no Lucrativos</option>
+                            <option value="605">Sueldos y Salarios e Ingresos Asimilados a Salarios</option>
+                            <option value="606">Arrendamiento</option>
+                            <option value="608">Demás ingresos</option>
+                            <option value="610">Residentes en el Extranjero sin Establecimiento Permanente en México</option>
+                            <option value="611">Ingresos por Dividendos (socios y accionistas)</option>
+                            <option value="612">Personas Físicas con Actividades Empresariales y Profesionales</option>
+                            <option value="614">Ingresos por intereses</option>
+                            <option value="616">Sin obligaciones fiscales</option>
+                            <option value="621">Incorporación Fiscal</option>
+                            <option value="622">Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras</option>
+                            <option value="623">Opcional para Grupos de Sociedades</option>
+                            <option value="624">Coordinados</option>
+                            <option value="628">Hidrocarburos</option>
+                            <option value="629">De los Regímenes Fiscales Preferentes y de las Empresas Multinacionales</option>
+                            <option value="630">Enajenación de acciones en bolsa de valores</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="empresaDireccion">Dirección Fiscal:</label>
+                    <textarea id="empresaDireccion" rows="3" required></textarea>
+                </div>
+
+                <h3>🔐 Certificados SAT</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="certificadoCER">Archivo .CER:</label>
+                        <input type="file" id="certificadoCER" accept=".cer">
+                    </div>
+                    <div class="form-group">
+                        <label for="certificadoKEY">Archivo .KEY:</label>
+                        <input type="file" id="certificadoKEY" accept=".key">
+                    </div>
+                    <div class="form-group">
+                        <label for="certificadoPassword">Contraseña:</label>
+                        <input type="password" id="certificadoPassword">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-success">💾 Guardar Configuración</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Ayuda flotante -->
+    <div class="floating-help" onclick="mostrarAyuda()">
+        ❓ Ayuda
+    </div>
+
+    <script>
+        // Variables globales
+        let clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+        let productos = JSON.parse(localStorage.getItem('productos')) || [];
+        let facturas = JSON.parse(localStorage.getItem('facturas')) || [];
+        let configuracion = JSON.parse(localStorage.getItem('configuracion')) || {};
+
+        // Inicializar aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            // Establecer fecha actual
+            document.getElementById('fechaFactura').value = new Date().toISOString().split('T')[0];
+            
+            // Cargar datos
+            cargarClientes();
+            cargarProductos();
+            cargarFacturas();
+            cargarConfiguracion();
+            actualizarEstadisticas();
+            
+            // Event listeners
+            document.getElementById('clienteSelect').addEventListener('change', actualizarPreviewCliente);
+            document.getElementById('fechaFactura').addEventListener('change', actualizarPreviewFecha);
+            
+            // Formularios
+            document.getElementById('facturaForm').addEventListener('submit', crearFactura);
+            document.getElementById('clienteForm').addEventListener('submit', guardarCliente);
+            document.getElementById('productoForm').addEventListener('submit', guardarProducto);
+            document.getElementById('configuracionForm').addEventListener('submit', guardarConfiguracion);
+        });
+
+        // Navegación entre tabs
+        function showTab(tabName) {
+            // Ocultar todos los tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remover clase active de todos los botones
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Mostrar tab seleccionado
+            document.getElementById(tabName).classList.add('active');
+            
+            // Activar botón correspondiente
+            event.target.classList.add('active');
+        }
+
+        // Gestión de clientes
+        function mostrarFormularioCliente() {
+            document.getElementById('formularioCliente').style.display = 'block';
+        }
+
+        function cancelarCliente() {
+            document.getElementById('formularioCliente').style.display = 'none';
+            document.getElementById('clienteForm').reset();
+        }
+
+        function guardarCliente(e) {
+            e.preventDefault();
+            
+            const cliente = {
+                id: Date.now(),
+                nombre: document.getElementById('clienteNombre').value,
+                rfc: document.getElementById('clienteRFC').value.toUpperCase(),
+                email: document.getElementById('clienteEmail').value,
+                telefono: document.getElementById('clienteTelefono').value,
+                direccion: document.getElementById('clienteDireccion').value
+            };
+            
+            clientes.push(cliente);
+            localStorage.setItem('clientes', JSON.stringify(clientes));
+            
+            cargarClientes();
+            cancelarCliente();
+            
+            alert('Cliente guardado exitosamente');
+        }
+
+        function cargarClientes() {
+            const select = document.getElementById('clienteSelect');
+            const tabla = document.getElementById('tablaClientes');
+            
+            // Limpiar select
+            select.innerHTML = '<option value="">Seleccionar cliente...</option>';
+            
+            // Limpiar tabla
+            tabla.innerHTML = '';
+            
+            if (clientes.length === 0) {
+                tabla.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #7f8c8d;">No hay clientes registrados</td></tr>';
+                return;
+            }
+            
+            clientes.forEach(cliente => {
+                // Agregar al select
+                const option = document.createElement('option');
+                option.value = cliente.id;
+                option.textContent = cliente.nombre;
+                select.appendChild(option);
+                
+                // Agregar a la tabla
+                const row = tabla.insertRow();
+                row.innerHTML = `
+                    <td>${cliente.nombre}</td>
+                    <td>${cliente.rfc}</td>
+                    <td>${cliente.email}</td>
+                    <td>${cliente.telefono}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="eliminarCliente(${cliente.id})">🗑️</button>
+                    </td>
+                `;
+            });
+        }
+
+        function eliminarCliente(id) {
+            if (confirm('¿Estás seguro de eliminar este cliente?')) {
+                clientes = clientes.filter(c => c.id !== id);
+                localStorage.setItem('clientes', JSON.stringify(clientes));
+                cargarClientes();
+            }
+        }
+
+        // Gestión de productos
+        function mostrarFormularioProducto() {
+            document.getElementById('formularioProducto').style.display = 'block';
+        }
+
+        function cancelarProducto() {
+            document.getElementById('formularioProducto').style.display = 'none';
+            document.getElementById('productoForm').reset();
+        }
+
+        function guardarProducto(e) {
+            e.preventDefault();
+            
+            const producto = {
+                id: Date.now(),
+                codigo: document.getElementById('productoCodigo').value,
+                nombre: document.getElementById('productoNombre').value,
+                precio: parseFloat(document.getElementById('productoPrecio').value),
+                unidad: document.getElementById('productoUnidad').value,
+                descripcion: document.getElementById('productoDescripcion').value
+            };
+            
+            productos.push(producto);
+            localStorage.setItem('productos', JSON.stringify(productos));
+            
+            cargarProductos();
+            cancelarProducto();
+            
+            alert('Producto guardado exitosamente');
+        }
+
+        function cargarProductos() {
+            const tabla = document.getElementById('tablaProductos');
+            const selects = document.querySelectorAll('.producto-select');
+            
+            // Limpiar tabla
+            tabla.innerHTML = '';
+            
+            // Limpiar selects
+            selects.forEach(select => {
+                select.innerHTML = '<option value="">Seleccionar...</option>';
+            });
+            
+            if (productos.length === 0) {
+                tabla.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #7f8c8d;">No hay productos registrados</td></tr>';
+                return;
+            }
+            
+            productos.forEach(producto => {
+                // Agregar a los selects
+                selects.forEach(select => {
+                    const option = document.createElement('option');
+                    option.value = producto.id;
+                    option.textContent = `${producto.codigo} - ${producto.nombre}`;
+                    option.dataset.precio = producto.precio;
+                    select.appendChild(option);
+                });
+                
+                // Agregar a la tabla
+                const row = tabla.insertRow();
+                row.innerHTML = `
+                    <td>${producto.codigo}</td>
+                    <td>${producto.nombre}</td>
+                    <td>$${producto.precio.toFixed(2)}</td>
+                    <td>${producto.unidad}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="eliminarProducto(${producto.id})">🗑️</button>
+                    </td>
+                `;
+            });
+        }
+
+        function eliminarProducto(id) {
+            if (confirm('¿Estás seguro de eliminar este producto?')) {
+                productos = productos.filter(p => p.id !== id);
+                localStorage.setItem('productos', JSON.stringify(productos));
+                cargarProductos();
+            }
+        }
+
+        // Gestión de facturas
+        function agregarProducto() {
+            const container = document.getElementById('productosFactura');
+            const newItem = document.createElement('div');
+            newItem.className = 'form-grid producto-item';
+            newItem.innerHTML = `
+                <div class="form-group">
+                    <label>Producto/Servicio:</label>
+                    <select class="producto-select" required>
+                        <option value="">Seleccionar...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Cantidad:</label>
+                    <input type="number" class="cantidad" min="1" value="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Precio Unitario:</label>
+                    <input type="number" class="precio" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Total:</label>
+                    <input type="number" class="total-item" step="0.01" readonly>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-danger" onclick="eliminarProductoFactura(this)">🗑️</button>
+                </div>
+            `;
+            
+            container.appendChild(newItem);
+            cargarProductosEnSelect(newItem.querySelector('.producto-select'));
+            
+            // Agregar event listeners
+            const select = newItem.querySelector('.producto-select');
+            const cantidad = newItem.querySelector('.cantidad');
+            const precio = newItem.querySelector('.precio');
+            
+            select.addEventListener('change', function() {
+                if (this.value) {
+                    const selectedOption = this.options[this.selectedIndex];
+                    precio.value = selectedOption.dataset.precio;
+                    calcularTotalItem(newItem);
+                }
+            });
+            
+            cantidad.addEventListener('input', () => calcularTotalItem(newItem));
+            precio.addEventListener('input', () => calcularTotalItem(newItem));
+        }
+
+        function eliminarProductoFactura(button) {
+            button.closest('.producto-item').remove();
+            actualizarTotales();
+        }
+
+        function cargarProductosEnSelect(select) {
+            select.innerHTML = '<option value="">Seleccionar...</option>';
+            productos.forEach(producto => {
+                const option = document.createElement('option');
+                option.value = producto.id;
+                option.textContent = `${producto.codigo} - ${producto.nombre}`;
+                option.dataset.precio = producto.precio;
+                select.appendChild(option);
+            });
+        }
+
+        function calcularTotalItem(item) {
+            const cantidad = parseFloat(item.querySelector('.cantidad').value) || 0;
+            const precio = parseFloat(item.querySelector('.precio').value) || 0;
+            const total = cantidad * precio;
+            
+            item.querySelector('.total-item').value = total.toFixed(2);
+            actualizarTotales();
+        }
+
+        function actualizarTotales() {
+            let subtotal = 0;
+            
+            document.querySelectorAll('.total-item').forEach(input => {
+                subtotal += parseFloat(input.value) || 0;
+            });
+            
+            const iva = subtotal * 0.16;
+            const total = subtotal + iva;
+            
+            document.getElementById('subtotalPreview').textContent = subtotal.toFixed(2);
+            document.getElementById('ivaPreview').textContent = iva.toFixed(2);
+            document.getElementById('totalPreview').textContent = total.toFixed(2);
+        }
+
+        function actualizarPreviewCliente() {
+            const clienteId = this.value;
+            const cliente = clientes.find(c => c.id == clienteId);
+            
+            if (cliente) {
+                document.getElementById('clientePreview').innerHTML = `
+                    <strong>${cliente.nombre}</strong><br>
+                    RFC: ${cliente.rfc}<br>
+                    ${cliente.direccion}
+                `;
+            } else {
+                document.getElementById('clientePreview').textContent = 'Selecciona un cliente';
+            }
+        }
+
+        function actualizarPreviewFecha() {
+            const fecha = new Date(this.value);
+            document.getElementById('fechaPreview').textContent = fecha.toLocaleDateString('es-MX');
+        }
+
+        function crearFactura(e) {
+            e.preventDefault();
+            
+            const clienteId = document.getElementById('clienteSelect').value;
+            const cliente = clientes.find(c => c.id == clienteId);
+            
+            if (!cliente) {
+                alert('Selecciona un cliente');
+                return;
+            }
+            
+            const items = [];
+            document.querySelectorAll('.producto-item').forEach(item => {
+                const productoId = item.querySelector('.producto-select').value;
+                const producto = productos.find(p => p.id == productoId);
+                
+                if (producto) {
+                    items.push({
+                        producto: producto,
+                        cantidad: parseFloat(item.querySelector('.cantidad').value),
+                        precio: parseFloat(item.querySelector('.precio').value),
+                        total: parseFloat(item.querySelector('.total-item').value)
+                    });
+                }
+            });
+            
+            if (items.length === 0) {
+                alert('Agrega al menos un producto');
+                return;
+            }
+            
+            const subtotal = items.reduce((sum, item) => sum + item.total, 0);
+            const iva = subtotal * 0.16;
+            const total = subtotal + iva;
+            
+            const factura = {
+                id: Date.now(),
+                folio: `F-${String(facturas.length + 1).padStart(3, '0')}`,
+                fecha: document.getElementById('fechaFactura').value,
+                cliente: cliente,
+                metodoPago: document.getElementById('metodoPago').value,
+                usoCFDI: document.getElementById('usoCFDI').value,
+                items: items,
+                subtotal: subtotal,
+                iva: iva,
+                total: total,
+                estado: 'Emitida'
+            };
+            
+            facturas.push(factura);
+            localStorage.setItem('facturas', JSON.stringify(facturas));
+            
+            alert(`Factura ${factura.folio} creada exitosamente`);
+            
+            // Limpiar formulario
+            document.getElementById('facturaForm').reset();
+            document.getElementById('fechaFactura').value = new Date().toISOString().split('T')[0];
+            
+            // Actualizar estadísticas
+            actualizarEstadisticas();
+            cargarFacturas();
+        }
+
+        function cargarFacturas() {
+            const tabla = document.getElementById('facturasRecientes');
+            tabla.innerHTML = '';
+            
+            if (facturas.length === 0) {
+                tabla.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #7f8c8d;">No hay facturas registradas</td></tr>';
+                return;
+            }
+            
+            // Mostrar las últimas 10 facturas
+            const ultimasFacturas = facturas.slice(-10).reverse();
+            
+            ultimasFacturas.forEach(factura => {
+                const row = tabla.insertRow();
+                row.innerHTML = `
+                    <td>${factura.folio}</td>
+                    <td>${factura.cliente.nombre}</td>
+                    <td>${new Date(factura.fecha).toLocaleDateString('es-MX')}</td>
+                    <td>$${factura.total.toFixed(2)}</td>
+                    <td><span style="color: #27ae60;">${factura.estado}</span></td>
+                    <td>
+                        <button class="btn btn-primary" onclick="verFactura(${factura.id})">👁️</button>
+                        <button class="btn btn-danger" onclick="eliminarFactura(${factura.id})">🗑️</button>
+                    </td>
+                `;
+            });
+        }
+
+        function verFactura(id) {
+            const factura = facturas.find(f => f.id === id);
+            if (factura) {
+                alert(`Factura: ${factura.folio}\nCliente: ${factura.cliente.nombre}\nTotal: $${factura.total.toFixed(2)}`);
+            }
+        }
+
+        function eliminarFactura(id) {
+            if (confirm('¿Estás seguro de eliminar esta factura?')) {
+                facturas = facturas.filter(f => f.id !== id);
+                localStorage.setItem('facturas', JSON.stringify(facturas));
+                cargarFacturas();
+                actualizarEstadisticas();
+            }
+        }
+
+        function actualizarEstadisticas() {
+            document.getElementById('totalFacturas').textContent = facturas.length;
+            document.getElementById('totalClientes').textContent = clientes.length;
+            
+            const ventasDelMes = facturas
+                .filter(f => new Date(f.fecha).getMonth() === new Date().getMonth())
+                .reduce((sum, f) => sum + f.total, 0);
+            
+            document.getElementById('totalVentas').textContent = `$${ventasDelMes.toFixed(2)}`;
+            document.getElementById('facturasPendientes').textContent = facturas.filter(f => f.estado === 'Pendiente').length;
+        }
+
+        // Configuración
+        function guardarConfiguracion(e) {
+            e.preventDefault();
+            
+            configuracion = {
+                empresa: {
+                    nombre: document.getElementById('empresaNombre').value,
+                    rfc: document.getElementById('empresaRFC').value,
+                    regimen: document.getElementById('empresaRegimen').value,
+                    direccion: document.getElementById('empresaDireccion').value
+                },
+                certificados: {
+                    password: document.getElementById('certificadoPassword').value
+                }
+            };
+            
+            localStorage.setItem('configuracion', JSON.stringify(configuracion));
+            alert('Configuración guardada exitosamente');
+        }
+
+        function cargarConfiguracion() {
+            if (configuracion.empresa) {
+                document.getElementById('empresaNombre').value = configuracion.empresa.nombre || '';
+                document.getElementById('empresaRFC').value = configuracion.empresa.rfc || '';
+                document.getElementById('empresaRegimen').value = configuracion.empresa.regimen || '';
+                document.getElementById('empresaDireccion').value = configuracion.empresa.direccion || '';
+            }
+        }
+
+        // Reportes
+        function generarReporte() {
+            const fechaInicio = document.getElementById('reporteFechaInicio').value;
+            const fechaFin = document.getElementById('reporteFechaFin').value;
+            
+            if (!fechaInicio || !fechaFin) {
+                alert('Selecciona ambas fechas');
+                return;
+            }
+            
+            const facturasFiltradas = facturas.filter(f => {
+                const fechaFactura = new Date(f.fecha);
+                return fechaFactura >= new Date(fechaInicio) && fechaFactura <= new Date(fechaFin);
+            });
+            
+            const totalVentas = facturasFiltradas.reduce((sum, f) => sum + f.total, 0);
+            const totalIVA = facturasFiltradas.reduce((sum, f) => sum + f.iva, 0);
+            
+            document.getElementById('reporteResultados').innerHTML = `
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">${facturasFiltradas.length}</div>
+                        <div class="stat-label">Facturas Emitidas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">$${totalVentas.toFixed(2)}</div>
+                        <div class="stat-label">Total Ventas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">$${totalIVA.toFixed(2)}</div>
+                        <div class="stat-label">Total IVA</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">$${(totalVentas - totalIVA).toFixed(2)}</div>
+                        <div class="stat-label">Subtotal</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Ayuda
+        function mostrarAyuda() {
+            alert(`🧾 ChapaMarket Facturas - Ayuda
+
+📋 Funciones principales:
+• Dashboard: Resumen de tu actividad
+• Nueva Factura: Crear facturas CFDI 4.0
+• Clientes: Gestionar base de datos de clientes
+• Productos: Catálogo de productos/servicios
+• Reportes: Estadísticas de ventas
+• Configuración: Datos fiscales y certificados
+
+📞 Soporte técnico:
+WhatsApp: 773-108-6826 o 763-109-3925
+Email: kashtaman@createstudiodigital.com
+
+🏢 Create Studio Digital
+ING. César Sánchez
+Chapantogo 2025 ChapaMarket Hgo.`);
+        }
+
+        // Event listeners para cálculos automáticos
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('producto-select')) {
+                const item = e.target.closest('.producto-item');
+                const selectedOption = e.target.options[e.target.selectedIndex];
+                if (selectedOption.dataset.precio) {
+                    item.querySelector('.precio').value = selectedOption.dataset.precio;
+                    calcularTotalItem(item);
+                }
+            }
+        });
+
+        document.addEventListener('input', function(e) {
+            if (e.target.classList.contains('cantidad') || e.target.classList.contains('precio')) {
+                const item = e.target.closest('.producto-item');
+                calcularTotalItem(item);
+            }
+        });
+    </script>
+</body>
+</html>

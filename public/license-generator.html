@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Generador de Licencias - ChapaMarket</title><link rel="icon" href="images/favicon.ico"><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;color:#fff;position:relative;overflow:hidden;padding:20px}.light-effect{position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.1) 0%,rgba(255,255,255,.05) 25%,transparent 50%);animation:moveLight 15s ease-in-out infinite;z-index:-2}@keyframes moveLight{0%{transform:translate(-30%,-30%) scale(1.5)}50%{transform:translate(30%,30%) scale(1.5)}100%{transform:translate(-30%,-30%) scale(1.5)}}.background-logo{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;opacity:.3;background-image:url("images/logo-createstudio.png");background-size:contain;background-position:center;background-repeat:no-repeat;filter:blur(4px)}.content{text-align:center;max-width:800px;width:100%;position:relative;z-index:1}.logo{width:300px;margin-bottom:30px}.title{font-size:36px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:4px;margin-bottom:40px;text-shadow:0 0 10px rgba(255,255,255,.3)}.license-container{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin:40px 0}.license-section{background:rgba(255,255,255,.05);padding:30px;border-radius:15px;border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(5px);transition:all .3s ease}.license-section:hover{background:rgba(255,255,255,.1);transform:translateY(-5px)}.license-section h2{margin-bottom:20px;font-size:24px;color:#fff}.form-group{margin-bottom:15px}.license-input{width:100%;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-size:16px;transition:all .3s ease}.license-input:focus{outline:none;border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.15)}.generate-button{background:rgba(255,255,255,.2);color:#fff;border:none;padding:12px 30px;border-radius:8px;font-size:16px;cursor:pointer;transition:all .3s ease;margin-top:10px;width:100%}.generate-button:hover{background:rgba(255,255,255,.3);transform:translateY(-2px)}.license-result{margin-top:20px;padding:15px;border-radius:8px;background:rgba(255,255,255,.1);display:none}.license-result.show{display:block}.error{color:#ff6b6b;font-weight:700}.success{color:#51cf66;font-weight:700}@media screen and (max-width:768px){.license-container{grid-template-columns:1fr}.title{font-size:28px;letter-spacing:2px}.logo{width:200px}}</style></head><body><div class="light-effect"></div><div class="background-logo"></div><div class="content"><img src="images/chapamarket-logo.png" alt="ChapaMarket Logo" class="logo"><h1 class="title">Generador de Licencias</h1><div class="license-container"><div class="license-section"><h2>Generar Nueva Licencia</h2><div class="form-group"><select id="licenseType" class="license-input"><option value="trial">Versión de Prueba (15 días)</option><option value="full">Licencia Completa (1 año)</option></select></div><button onclick="generateLicense()" class="generate-button">Generar Licencia</button><div id="licenseResult" class="license-result"></div></div><div class="license-section"><h2>Activar Licencia</h2><div class="form-group"><input type="text" id="licenseKey" placeholder="Ingresa la clave de licencia" class="license-input"></div><button onclick="activateLicense()" class="generate-button">Activar Licencia</button><div id="activationResult" class="license-result"></div></div></div></div><script>function generateLicense() {
+    const clientName = document.getElementById('clientName').value;
+    const clientEmail = document.getElementById('clientEmail').value;
+    const licenseType = document.getElementById('licenseType').value;
+    
+    if (!clientName || !clientEmail) {
+        alert('Por favor completa todos los campos');
+        return;
+    }
+
+    const resultDiv = document.getElementById('licenseResult');
+    resultDiv.innerHTML = '<p>Generando licencia...</p>';
+    resultDiv.classList.add('show');
+
+    fetch('http://localhost:5000/generate-license', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            clientName,
+            clientEmail,
+            licenseType
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            resultDiv.innerHTML = `<p class="error">Error: ${data.error}</p>`;
+        } else {
+            resultDiv.innerHTML = `
+                <h3>Licencia Generada</h3>
+                <p><strong>Cliente:</strong> ${data.client_name}</p>
+                <p><strong>Email:</strong> ${data.email}</p>
+                <p><strong>Tipo:</strong> ${data.type === 'trial' ? 'Versión de Prueba (15 días)' : 'Licencia Completa (1 año)'}</p>
+                <p><strong>Clave:</strong> ${data.license_key}</p>
+                <p><strong>Estado:</strong> <span class="error">No activada</span></p>
+                <p><strong>Duración:</strong> ${data.duration_days} días</p>
+                <p><em>La licencia se activará cuando el usuario la integre en el sistema</em></p>
+            `;
+        }
+    })
+    .catch(error => {
+        resultDiv.innerHTML = `<p class="error">Error al conectar con el servidor: ${error.message}</p>`;
+    });
+}
+
+function activateLicense() {
+    const licenseKey = document.getElementById('licenseKey').value;
+    
+    if (!licenseKey) {
+        alert('Por favor ingresa la clave de licencia');
+        return;
+    }
+
+    const resultDiv = document.getElementById('activationResult');
+    resultDiv.innerHTML = '<p>Activando licencia...</p>';
+    resultDiv.classList.add('show');
+
+    fetch('http://localhost:5000/activate-license', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            licenseKey
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            resultDiv.innerHTML = `<p class="error">Error: ${data.error}</p>`;
+        } else {
+            resultDiv.innerHTML = `
+                <h3>Licencia Activada</h3>
+                <p><strong>Cliente:</strong> ${data.client_name}</p>
+                <p><strong>Email:</strong> ${data.email}</p>
+                <p><strong>Tipo:</strong> ${data.type === 'trial' ? 'Versión de Prueba (15 días)' : 'Licencia Completa (1 año)'}</p>
+                <p><strong>Clave:</strong> ${data.license_key}</p>
+                <p><strong>Estado:</strong> <span class="success">Activada</span></p>
+                <p><strong>Fecha de Activación:</strong> ${data.activation_date}</p>
+                <p><strong>Válida hasta:</strong> ${data.expiry_date}</p>
+            `;
+        }
+    })
+    .catch(error => {
+        resultDiv.innerHTML = `<p class="error">Error al conectar con el servidor: ${error.message}</p>`;
+    });
+}
+</script></body></html>
+ 

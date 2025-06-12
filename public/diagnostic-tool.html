@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChapaMarket - Herramienta de Diagnóstico</title>
+    <link rel="icon" href="favicon.ico">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo {
+            width: 200px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 16px;
+        }
+
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .error {
+            color: #ff6b6b;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .success {
+            color: #51cf66;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="images/chapamarket-logo.png" alt="ChapaMarket Logo" class="logo">
+        <h1>Herramienta de Diagnóstico</h1>
+        <div class="form-group">
+            <input type="text" id="licenseKey" placeholder="Ingresa tu número de licencia">
+        </div>
+        <div class="form-group">
+            <input type="email" id="email" placeholder="Ingresa tu email registrado">
+        </div>
+        <button onclick="verifyAccess()">Acceder</button>
+        <div id="error" class="error"></div>
+        <div id="success" class="success"></div>
+    </div>
+
+    <script>
+        function verifyAccess() {
+            const licenseKey = document.getElementById('licenseKey').value;
+            const email = document.getElementById('email').value;
+            const errorDiv = document.getElementById('error');
+            const successDiv = document.getElementById('success');
+
+            if (!licenseKey || !email) {
+                errorDiv.textContent = 'Por favor completa todos los campos';
+                errorDiv.style.display = 'block';
+                successDiv.style.display = 'none';
+                return;
+            }
+
+            // Aquí iría la verificación real con el servidor
+            // Por ahora es una simulación
+            if (licenseKey.length === 16 && email.includes('@')) {
+                errorDiv.style.display = 'none';
+                successDiv.textContent = 'Verificando acceso...';
+                successDiv.style.display = 'block';
+                
+                // Simular verificación
+                setTimeout(() => {
+                    window.location.href = 'diagnostic-tool-download.html';
+                }, 1500);
+            } else {
+                errorDiv.textContent = 'Licencia o email inválidos';
+                errorDiv.style.display = 'block';
+                successDiv.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html> 

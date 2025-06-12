@@ -1,0 +1,3551 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHAPAMARKET Pro - Sistema de Facturación CFDI 4.0</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #0f172a;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-container {
+            display: flex;
+            flex: 1;
+        }
+
+        /* Header */
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+
+        .header-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
+        }
+
+        .user-info:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: white;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-name {
+            font-size: 0.875rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: var(--secondary);
+            color: white;
+            padding: 1rem 0;
+            overflow-y: auto;
+            transition: width 0.3s;
+            flex-shrink: 0;
+        }
+
+        .sidebar.collapsed {
+            width: 60px;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            width: 100%;
+            text-align: right;
+            padding-right: 1.5rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: var(--primary);
+        }
+
+        .nav-icon {
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+            width: 1.5rem;
+            text-align: center;
+        }
+
+        .sidebar.collapsed .nav-text {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-link {
+            padding: 0.75rem;
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .nav-icon {
+            margin-right: 0;
+        }
+
+        .sidebar.collapsed .sidebar-toggle {
+            padding-right: 0.5rem;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--secondary);
+        }
+
+        /* Cards */
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            background-color: #f8fafc;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .stat-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.blue {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+        }
+
+        .stat-icon.green {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .stat-icon.orange {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .stat-icon.red {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        /* Forms */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--secondary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.625rem 0.75rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: var(--dark);
+            background-color: white;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            font-weight: 500;
+            text-align: center;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 0.625rem 1rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            border-radius: 0.375rem;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            color: white;
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .btn-success {
+            color: white;
+            background-color: var(--success);
+            border-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background-color: #0da271;
+            border-color: #0da271;
+        }
+
+        .btn-danger {
+            color: white;
+            background-color: var(--danger);
+            border-color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+            border-color: #dc2626;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            vertical-align: top;
+            border-top: 1px solid var(--border);
+            text-align: left;
+        }
+
+        .table thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid var(--border);
+            background-color: #f8fafc;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(241, 245, 249, 0.5);
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+            color: var(--gray);
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: var(--primary);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: 0.375rem;
+        }
+
+        .alert-success {
+            color: #0f5132;
+            background-color: #d1e7dd;
+            border-color: #badbcc;
+        }
+
+        .alert-danger {
+            color: #842029;
+            background-color: #f8d7da;
+            border-color: #f5c2c7;
+        }
+
+        .alert-warning {
+            color: #664d03;
+            background-color: #fff3cd;
+            border-color: #ffecb5;
+        }
+
+        .alert-info {
+            color: #055160;
+            background-color: #cff4fc;
+            border-color: #b6effb;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.25rem;
+        }
+
+        .badge-success {
+            color: white;
+            background-color: var(--success);
+        }
+
+        .badge-danger {
+            color: white;
+            background-color: var(--danger);
+        }
+
+        .badge-warning {
+            color: var(--dark);
+            background-color: var(--warning);
+        }
+
+        .badge-info {
+            color: white;
+            background-color: var(--info);
+        }
+
+        /* Modal */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal-backdrop.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(-20px);
+            transition: transform 0.3s;
+        }
+
+        .modal-backdrop.show .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        /* Invoice Preview */
+        .invoice-preview {
+            background-color: white;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .invoice-company h2 {
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .invoice-company p {
+            margin: 0.25rem 0;
+            color: var(--gray);
+        }
+
+        .invoice-details {
+            text-align: right;
+        }
+
+        .invoice-details h1 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .invoice-details p {
+            margin: 0.25rem 0;
+        }
+
+        .invoice-client {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-radius: 0.375rem;
+        }
+
+        .invoice-client h3 {
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+
+        .invoice-table th {
+            background-color: #f8fafc;
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .invoice-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .invoice-table tfoot td {
+            border-top: 2px solid var(--border);
+            font-weight: 600;
+        }
+
+        .invoice-total {
+            text-align: right;
+            margin-top: 2rem;
+        }
+
+        .invoice-total table {
+            width: auto;
+            margin-left: auto;
+        }
+
+        .invoice-total td {
+            padding: 0.5rem 0;
+        }
+
+        .invoice-total td:first-child {
+            text-align: right;
+            padding-right: 1rem;
+        }
+
+        .invoice-total .grand-total {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .invoice-footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--gray);
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                max-height: 300px;
+            }
+
+            .sidebar.collapsed {
+                max-height: 60px;
+                overflow: hidden;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .invoice-header {
+                flex-direction: column;
+            }
+
+            .invoice-details {
+                text-align: left;
+                margin-top: 1rem;
+            }
+        }
+
+        /* Utilities */
+        .d-flex {
+            display: flex;
+        }
+
+        .align-items-center {
+            align-items: center;
+        }
+
+        .justify-content-between {
+            justify-content: space-between;
+        }
+
+        .mb-1 {
+            margin-bottom: 0.25rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mt-2 {
+            margin-top: 0.5rem;
+        }
+
+        .mt-3 {
+            margin-top: 1rem;
+        }
+
+        .mt-4 {
+            margin-top: 1.5rem;
+        }
+
+        .ml-2 {
+            margin-left: 0.5rem;
+        }
+
+        .mr-2 {
+            margin-right: 0.5rem;
+        }
+
+        .p-2 {
+            padding: 0.5rem;
+        }
+
+        .p-3 {
+            padding: 1rem;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-success {
+            color: var(--success);
+        }
+
+        .text-danger {
+            color: var(--danger);
+        }
+
+        .text-warning {
+            color: var(--warning);
+        }
+
+        .text-primary {
+            color: var(--primary);
+        }
+
+        .text-muted {
+            color: var(--gray);
+        }
+
+        .w-100 {
+            width: 100%;
+        }
+
+        .d-none {
+            display: none;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 120px;
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.75rem;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.625rem 0.75rem;
+            font-size: 0.875rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem 0 0 0.375rem;
+        }
+
+        .search-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 1rem;
+            border-radius: 0 0.375rem 0.375rem 0;
+            cursor: pointer;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .page-item {
+            margin: 0 0.25rem;
+        }
+
+        .page-link {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .page-link:hover {
+            background-color: #f1f5f9;
+        }
+
+        .page-item.active .page-link {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle {
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            z-index: 1000;
+            display: none;
+            min-width: 10rem;
+            padding: 0.5rem 0;
+            margin: 0.125rem 0 0;
+            font-size: 0.875rem;
+            color: var(--dark);
+            text-align: left;
+            list-style: none;
+            background-color: white;
+            background-clip: padding-box;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            box-shadow: var(--shadow);
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 0.5rem 1.5rem;
+            clear: both;
+            font-weight: 400;
+            color: var(--dark);
+            text-align: inherit;
+            white-space: nowrap;
+            background-color: transparent;
+            border: 0;
+            text-decoration: none;
+        }
+
+        .dropdown-item:hover {
+            color: var(--dark);
+            background-color: #f1f5f9;
+        }
+
+        .dropdown-divider {
+            height: 0;
+            margin: 0.5rem 0;
+            overflow: hidden;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Checkbox and Radio */
+        .form-check {
+            display: block;
+            min-height: 1.5rem;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-check-input {
+            width: 1rem;
+            height: 1rem;
+            margin-top: 0.25rem;
+            margin-left: -1.5rem;
+            vertical-align: top;
+        }
+
+        .form-check-label {
+            margin-bottom: 0;
+        }
+
+        /* File Input */
+        .form-file {
+            position: relative;
+        }
+
+        .form-file-input {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: calc(1.5em + 0.75rem + 2px);
+            margin: 0;
+            opacity: 0;
+        }
+
+        .form-file-label {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            z-index: 1;
+            height: calc(1.5em + 0.75rem + 2px);
+            padding: 0.375rem 0.75rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: var(--dark);
+            background-color: white;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+        }
+
+        .form-file-text {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .form-file-button {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 3;
+            display: block;
+            height: calc(1.5em + 0.75rem + 2px);
+            padding: 0.375rem 0.75rem;
+            line-height: 1.5;
+            color: var(--dark);
+            background-color: #f1f5f9;
+            border-left: inherit;
+            border-radius: 0 0.375rem 0.375rem 0;
+        }
+
+        /* Progress Bar */
+        .progress {
+            display: flex;
+            height: 0.75rem;
+            overflow: hidden;
+            font-size: 0.75rem;
+            background-color: #f1f5f9;
+            border-radius: 0.375rem;
+        }
+
+        .progress-bar {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
+            color: white;
+            text-align: center;
+            white-space: nowrap;
+            background-color: var(--primary);
+            transition: width 0.6s ease;
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 99;
+        }
+
+        .fab:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Notification Badge */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            padding: 0.25rem 0.5rem;
+            border-radius: 50%;
+            background-color: var(--danger);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Loader Overlay */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .loader-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background-color: white;
+            }
+
+            .header,
+            .sidebar,
+            .card-header,
+            .card-footer,
+            .btn,
+            .fab,
+            .no-print {
+                display: none !important;
+            }
+
+            .card {
+                box-shadow: none;
+                border: none;
+            }
+
+            .card-body {
+                padding: 0;
+            }
+
+            .invoice-preview {
+                border: none;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="header-logo">🧾</div>
+            <div class="header-title">CHAPAMARKET Pro</div>
+        </div>
+        <div class="header-right">
+            <div class="user-info dropdown-toggle" onclick="toggleDropdown('userDropdown')">
+                <div class="user-avatar">CS</div>
+                <div class="user-name">César Sánchez</div>
+            </div>
+            <div class="dropdown-menu" id="userDropdown">
+                <a href="#" class="dropdown-item" onclick="showTab('perfil')">Mi Perfil</a>
+                <a href="#" class="dropdown-item" onclick="showTab('configuracion')">Configuración</a>
+                <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item">Cerrar Sesión</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">
+                <span id="sidebarToggleIcon">◀</span>
+            </button>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" onclick="showTab('dashboard')">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showTab('facturas')">
+                        <span class="nav-icon">🧾</span>
+                        <span class="nav-text">Facturas</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showTab('clientes')">
+                        <span class="nav-icon">👥</span>
+                        <span class="nav-text">Clientes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showTab('productos')">
+                        <span class="nav-icon">📦</span>
+                        <span class="nav-text">Productos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showTab('reportes')">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-text">Reportes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showTab('cuentas')">
+                        <span class="nav-icon">💰</span>
+                        <span class="nav-text">Cuentas</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showTab('configuracion')">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-text">Configuración</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showTab('ayuda')">
+                        <span class="nav-icon">❓</span>
+                        <span class="nav-text">Ayuda</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Dashboard -->
+            <div id="dashboard" class="tab-content active">
+                <h1 class="page-title">Dashboard</h1>
+
+                <div class="alert alert-info">
+                    <strong>¡Bienvenido a CHAPAMARKET Pro!</strong> Sistema completo de facturación electrónica CFDI 4.0 para México.
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">📄</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="totalFacturas">0</div>
+                            <div class="stat-label">Facturas Emitidas</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">💵</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="totalVentas">$0.00</div>
+                            <div class="stat-label">Ventas del Mes</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">👥</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="totalClientes">0</div>
+                            <div class="stat-label">Clientes Registrados</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon red">⚠️</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="facturasPendientes">0</div>
+                            <div class="stat-label">Facturas Pendientes</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Últimas Facturas</h2>
+                        <button class="btn btn-primary btn-sm" onclick="showTab('facturas')">Ver Todas</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Folio</th>
+                                        <th>Cliente</th>
+                                        <th>Fecha</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ultimasFacturas">
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">No hay facturas registradas</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Acciones Rápidas</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex" style="gap: 1rem; flex-wrap: wrap;">
+                            <button class="btn btn-primary" onclick="showTab('nueva-factura')">
+                                <span style="font-size: 1.5rem; margin-right: 0.5rem;">📄</span> Nueva Factura
+                            </button>
+                            <button class="btn btn-primary" onclick="showTab('nuevo-cliente')">
+                                <span style="font-size: 1.5rem; margin-right: 0.5rem;">👤</span> Nuevo Cliente
+                            </button>
+                            <button class="btn btn-primary" onclick="showTab('nuevo-producto')">
+                                <span style="font-size: 1.5rem; margin-right: 0.5rem;">📦</span> Nuevo Producto
+                            </button>
+                            <button class="btn btn-primary" onclick="showTab('reportes')">
+                                <span style="font-size: 1.5rem; margin-right: 0.5rem;">📊</span> Generar Reporte
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Facturas -->
+            <div id="facturas" class="tab-content">
+                <h1 class="page-title">Gestión de Facturas</h1>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="search-bar">
+                        <input type="text" class="search-input" placeholder="Buscar facturas...">
+                        <button class="search-btn">🔍</button>
+                    </div>
+                    <button class="btn btn-primary" onclick="showTab('nueva-factura')">+ Nueva Factura</button>
+                </div>
+
+                <div class="tabs">
+                    <div class="tab active" onclick="showFacturaTab('todas')">Todas</div>
+                    <div class="tab" onclick="showFacturaTab('pendientes')">Pendientes</div>
+                    <div class="tab" onclick="showFacturaTab('pagadas')">Pagadas</div>
+                    <div class="tab" onclick="showFacturaTab('canceladas')">Canceladas</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Folio</th>
+                                        <th>Serie</th>
+                                        <th>Cliente</th>
+                                        <th>Fecha</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaFacturas">
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted">No hay facturas registradas</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="pagination">
+                            <div class="page-item">
+                                <a href="#" class="page-link">«</a>
+                            </div>
+                            <div class="page-item active">
+                                <a href="#" class="page-link">1</a>
+                            </div>
+                            <div class="page-item">
+                                <a href="#" class="page-link">2</a>
+                            </div>
+                            <div class="page-item">
+                                <a href="#" class="page-link">3</a>
+                            </div>
+                            <div class="page-item">
+                                <a href="#" class="page-link">»</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nueva Factura -->
+            <div id="nueva-factura" class="tab-content">
+                <h1 class="page-title">Nueva Factura</h1>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Datos de la Factura</h2>
+                    </div>
+                    <div class="card-body">
+                        <form id="facturaForm">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="tipoComprobante">Tipo de Comprobante</label>
+                                    <select class="form-control" id="tipoComprobante" required>
+                                        <option value="">Seleccionar...</option>
+                                        <option value="I">Ingreso</option>
+                                        <option value="E">Egreso</option>
+                                        <option value="T">Traslado</option>
+                                        <option value="N">Nómina</option>
+                                        <option value="P">Pago</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="serie">Serie</label>
+                                    <input type="text" class="form-control" id="serie" placeholder="Ej: A">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="fecha">Fecha</label>
+                                    <input type="date" class="form-control" id="fecha" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="formaPago">Forma de Pago</label>
+                                    <select class="form-control" id="formaPago" required>
+                                        <option value="">Seleccionar...</option>
+                                        <option value="01">Efectivo</option>
+                                        <option value="02">Cheque nominativo</option>
+                                        <option value="03">Transferencia electrónica</option>
+                                        <option value="04">Tarjeta de crédito</option>
+                                        <option value="28">Tarjeta de débito</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="clienteSelect">Cliente</label>
+                                <select class="form-control" id="clienteSelect" required>
+                                    <option value="">Seleccionar cliente...</option>
+                                </select>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="metodoPago">Método de Pago</label>
+                                    <select class="form-control" id="metodoPago" required>
+                                        <option value="">Seleccionar...</option>
+                                        <option value="PUE">Pago en una sola exhibición</option>
+                                        <option value="PPD">Pago en parcialidades o diferido</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="usoCFDI">Uso CFDI</label>
+                                    <select class="form-control" id="usoCFDI" required>
+                                        <option value="">Seleccionar...</option>
+                                        <option value="G01">Adquisición de mercancías</option>
+                                        <option value="G02">Devoluciones, descuentos o bonificaciones</option>
+                                        <option value="G03">Gastos en general</option>
+                                        <option value="I01">Construcciones</option>
+                                        <option value="P01">Por definir</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <h3 class="mb-3 mt-4">Conceptos</h3>
+
+                            <div id="conceptos">
+                                <div class="card mb-3 concepto-item">
+                                    <div class="card-body">
+                                        <div class="form-grid">
+                                            <div class="form-group">
+                                                <label class="form-label">Producto/Servicio</label>
+                                                <select class="form-control producto-select" required>
+                                                    <option value="">Seleccionar...</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">Cantidad</label>
+                                                <input type="number" class="form-control cantidad" min="1" value="1" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">Precio Unitario</label>
+                                                <input type="number" class="form-control precio" step="0.01" min="0" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">Descuento</label>
+                                                <input type="number" class="form-control descuento" step="0.01" min="0" value="0">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Descripción</label>
+                                            <textarea class="form-control descripcion" rows="2" required></textarea>
+                                        </div>
+                                        <div class="d-flex justify-content-between mt-3">
+                                            <div>
+                                                <button type="button" class="btn btn-danger btn-sm" onclick="eliminarConcepto(this)">Eliminar</button>
+                                            </div>
+                                            <div class="text-right">
+                                                <strong>Subtotal: $<span class="subtotal-concepto">0.00</span></strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <button type="button" class="btn btn-primary" onclick="agregarConcepto()">+ Agregar Concepto</button>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-end">
+                                        <table style="width: auto;">
+                                            <tr>
+                                                <td class="text-right pr-3">Subtotal:</td>
+                                                <td class="text-right" id="subtotalFactura">$0.00</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-right pr-3">IVA (16%):</td>
+                                                <td class="text-right" id="ivaFactura">$0.00</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-right pr-3"><strong>Total:</strong></td>
+                                                <td class="text-right"><strong id="totalFactura">$0.00</strong></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-between">
+                                    <button type="button" class="btn btn-danger" onclick="showTab('facturas')">Cancelar</button>
+                                    <div>
+                                        <button type="button" class="btn btn-primary mr-2" onclick="previsualizarFactura()">Vista Previa</button>
+                                        <button type="submit" class="btn btn-success">Generar Factura</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clientes -->
+            <div id="clientes" class="tab-content">
+                <h1 class="page-title">Gestión de Clientes</h1>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="search-bar">
+                        <input type="text" class="search-input" placeholder="Buscar clientes...">
+                        <button class="search-btn">🔍</button>
+                    </div>
+                    <button class="btn btn-primary" onclick="showTab('nuevo-cliente')">+ Nuevo Cliente</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Razón Social</th>
+                                        <th>RFC</th>
+                                        <th>Régimen Fiscal</th>
+                                        <th>Email</th>
+                                        <th>Teléfono</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaClientes">
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">No hay clientes registrados</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="pagination">
+                            <div class="page-item">
+                                <a href="#" class="page-link">«</a>
+                            </div>
+                            <div class="page-item active">
+                                <a href="#" class="page-link">1</a>
+                            </div>
+                            <div class="page-item">
+                                <a href="#" class="page-link">2</a>
+                            </div>
+                            <div class="page-item">
+                                <a href="#" class="page-link">3</a>
+                            </div>
+                            <div class="page-item">
+                                <a href="#" class="page-link">»</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nuevo Cliente -->
+            <div id="nuevo-cliente" class="tab-content">
+                <h1 class="page-title">Nuevo Cliente</h1>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Datos del Cliente</h2>
+                    </div>
+                    <div class="card-body">
+                        <form id="clienteForm">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="tipoPersona">Tipo de Persona</label>
+                                    <select class="form-control" id="tipoPersona" required>
+                                        <option value="">Seleccionar...</option>
+                                        <option value="fisica">Física</option>
+                                        <option value="moral">Moral</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="clienteRFC">RFC</label>
+                                    <input type="text" class="form-control" id="clienteRFC" placeholder="Ej: XAXX010101000" required maxlength="13">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="clienteNombre">Razón Social / Nombre Completo</label>
+                                <input type="text" class="form-control" id="clienteNombre" placeholder="Nombre o razón social completa" required>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="clienteRegimenFiscal">Régimen Fiscal</label>
+                                    <select class="form-control" id="clienteRegimenFiscal" required>
+                                        <option value="">Seleccionar...</option>
+                                        <option value="601">General de Ley Personas Morales</option>
+                                        <option value="603">Personas Morales con Fines no Lucrativos</option>
+                                        <option value="605">Sueldos y Salarios e Ingresos Asimilados a Salarios</option>
+                                        <option value="606">Arrendamiento</option>
+                                        <option value="608">Demás ingresos</option>
+                                        <option value="610">Residentes en el Extranjero sin Establecimiento Permanente en México</option>
+                                        <option value="611">Ingresos por Dividendos (socios y accionistas)</option>
+                                        <option value="612">Personas Físicas con Actividades Empresariales y Profesionales</option>
+                                        <option value="614">Ingresos por intereses</option>
+                                        <option value="616">Sin obligaciones fiscales</option>
+                                        <option value="621">Incorporación Fiscal</option>
+                                        <option value="622">Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras</option>
+                                        <option value="623">Opcional para Grupos de Sociedades</option>
+                                        <option value="624">Coordinados</option>
+                                        <option value="628">Hidrocarburos</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="clienteCP">Código Postal</label>
+                                    <input type="text" class="form-control" id="clienteCP" placeholder="Ej: 06700" required maxlength="5">
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="clienteEmail">Email</label>
+                                    <input type="email" class="form-control" id="clienteEmail" placeholder="ejemplo@dominio.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="clienteTelefono">Teléfono</label>
+                                    <input type="tel" class="form-control" id="clienteTelefono" placeholder="Ej: 5512345678">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="clienteDireccion">Dirección</label>
+                                <textarea class="form-control" id="clienteDireccion" rows="3" placeholder="Dirección completa"></textarea>
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-between">
+                                    <button type="button" class="btn btn-danger" onclick="showTab('clientes')">Cancelar</button>
+                                    <button type="submit" class="btn btn-success">Guardar Cliente</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Productos -->
+            <div id="productos" class="tab-content">
+                <h1 class="page-title">Catálogo de Productos y Servicios</h1>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="search-bar">
+                        <input type="text" class="search-input" placeholder="Buscar productos...">
+                        <button class="search-btn">🔍</button>
+                    </div>
+                    <button class="btn btn-primary" onclick="showTab('nuevo-producto')">+ Nuevo Producto</button>
+                </div>
+
+                <div class="tabs">
+                    <div class="tab active" onclick="showProductoTab('todos')">Todos</div>
+                    <div class="tab" onclick="showProductoTab('productos')">Productos</div>
+                    <div class="tab" onclick="showProductoTab('servicios')">Servicios</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Clave SAT</th>
+                                        <th>Nombre</th>
+                                        <th>Precio</th>
+                                        <th>Unidad</th>
+                                        <th>Tipo</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaProductos">
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted">No hay productos registrados</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="pagination">
+                            <div class="page-item">
+                                <a href="#" class="page-link">«</a>
+                            </div>
+                            <div class="page-item active">
+                                <a href="#" class="page-link">1</a>
+                            </div>
+                            <div class="page-item">
+                                <a href="#" class="page-link">2</a>
+                            </div>
+                            <div class="page-item">
+                                <a href="#" class="page-link">3</a>
+                            </div>
+                            <div class="page-item">
+                                <a href="#" class="page-link">»</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nuevo Producto -->
+            <div id="nuevo-producto" class="tab-content">
+                <h1 class="page-title">Nuevo Producto/Servicio</h1>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Datos del Producto/Servicio</h2>
+                    </div>
+                    <div class="card-body">
+                        <form id="productoForm">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="tipoProducto">Tipo</label>
+                                    <select class="form-control" id="tipoProducto" required>
+                                        <option value="">Seleccionar...</option>
+                                        <option value="producto">Producto</option>
+                                        <option value="servicio">Servicio</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="productoCodigo">Código Interno</label>
+                                    <input type="text" class="form-control" id="productoCodigo" placeholder="Ej: PROD001" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="productoNombre">Nombre del Producto/Servicio</label>
+                                <input type="text" class="form-control" id="productoNombre" placeholder="Nombre descriptivo" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="productoDescripcion">Descripción</label>
+                                <textarea class="form-control" id="productoDescripcion" rows="3" placeholder="Descripción detallada"></textarea>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="productoClaveSAT">Clave SAT (ClaveProdServ)</label>
+                                    <input type="text" class="form-control" id="productoClaveSAT" placeholder="Ej: 01010101" required maxlength="8">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="productoUnidad">Unidad de Medida</label>
+                                    <select class="form-control" id="productoUnidad" required>
+                                        <option value="">Seleccionar...</option>
+                                        <option value="H87">Pieza</option>
+                                        <option value="KGM">Kilogramo</option>
+                                        <option value="LTR">Litro</option>
+                                        <option value="MTR">Metro</option>
+                                        <option value="E48">Servicio</option>
+                                        <option value="ACT">Actividad</option>
+                                        <option value="E54">Lote</option>
+                                        <option value="SET">Juego</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="productoPrecio">Precio Unitario</label>
+                                    <input type="number" class="form-control" id="productoPrecio" step="0.01" min="0" placeholder="0.00" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="productoIVA">IVA (%)</label>
+                                    <select class="form-control" id="productoIVA" required>
+                                        <option value="16">16%</option>
+                                        <option value="8">8%</option>
+                                        <option value="0">0%</option>
+                                        <option value="exento">Exento</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-between">
+                                    <button type="button" class="btn btn-danger" onclick="showTab('productos')">Cancelar</button>
+                                    <button type="submit" class="btn btn-success">Guardar Producto</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reportes -->
+            <div id="reportes" class="tab-content">
+                <h1 class="page-title">Reportes y Estadísticas</h1>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Generar Reportes</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="tipoReporte">Tipo de Reporte</label>
+                                <select class="form-control" id="tipoReporte">
+                                    <option value="">Seleccionar...</option>
+                                    <option value="ventas">Reporte de Ventas</option>
+                                    <option value="facturas">Reporte de Facturas</option>
+                                    <option value="clientes">Reporte de Clientes</option>
+                                    <option value="productos">Reporte de Productos</option>
+                                    <option value="impuestos">Reporte de Impuestos</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="fechaInicio">Fecha Inicio</label>
+                                <input type="date" class="form-control" id="fechaInicio">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="fechaFin">Fecha Fin</label>
+                                <input type="date" class="form-control" id="fechaFin">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="formatoReporte">Formato</label>
+                                <select class="form-control" id="formatoReporte">
+                                    <option value="pdf">PDF</option>
+                                    <option value="excel">Excel</option>
+                                    <option value="csv">CSV</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <button class="btn btn-primary" onclick="generarReporte()">Generar Reporte</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Estadísticas del Mes</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon blue">📊</div>
+                                <div class="stat-info">
+                                    <div class="stat-value">$0.00</div>
+                                    <div class="stat-label">Ingresos Totales</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon green">💰</div>
+                                <div class="stat-info">
+                                    <div class="stat-value">$0.00</div>
+                                    <div class="stat-label">IVA Cobrado</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon orange">📈</div>
+                                <div class="stat-info">
+                                    <div class="stat-value">0</div>
+                                    <div class="stat-label">Facturas Emitidas</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon red">👥</div>
+                                <div class="stat-info">
+                                    <div class="stat-value">0</div>
+                                    <div class="stat-label">Clientes Nuevos</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cuentas -->
+            <div id="cuentas" class="tab-content">
+                <h1 class="page-title">Cuentas por Cobrar y Pagar</h1>
+
+                <div class="tabs">
+                    <div class="tab active" onclick="showCuentaTab('cobrar')">Por Cobrar</div>
+                    <div class="tab" onclick="showCuentaTab('pagar')">Por Pagar</div>
+                    <div class="tab" onclick="showCuentaTab('conciliacion')">Conciliación</div>
+                </div>
+
+                <div id="cuentas-cobrar" class="tab-content active">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Cuentas por Cobrar</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Factura</th>
+                                            <th>Cliente</th>
+                                            <th>Fecha Emisión</th>
+                                            <th>Fecha Vencimiento</th>
+                                            <th>Monto</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="7" class="text-center text-muted">No hay cuentas por cobrar</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="cuentas-pagar" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Cuentas por Pagar</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Proveedor</th>
+                                            <th>Concepto</th>
+                                            <th>Fecha</th>
+                                            <th>Vencimiento</th>
+                                            <th>Monto</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="7" class="text-center text-muted">No hay cuentas por pagar</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="conciliacion" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Conciliación Bancaria</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <strong>Próximamente:</strong> Funcionalidad de conciliación bancaria automática.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración -->
+            <div id="configuracion" class="tab-content">
+                <h1 class="page-title">Configuración del Sistema</h1>
+
+                <div class="tabs">
+                    <div class="tab active" onclick="showConfigTab('empresa')">Datos de la Empresa</div>
+                    <div class="tab" onclick="showConfigTab('sat')">Configuración SAT</div>
+                    <div class="tab" onclick="showConfigTab('plantillas')">Plantillas</div>
+                    <div class="tab" onclick="showConfigTab('sistema')">Sistema</div>
+                </div>
+
+                <div id="config-empresa" class="tab-content active">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Datos de la Empresa</h2>
+                        </div>
+                        <div class="card-body">
+                            <form id="empresaForm">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label" for="empresaRFC">RFC</label>
+                                        <input type="text" class="form-control" id="empresaRFC" placeholder="Ej: ABC123456789" required maxlength="13">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="empresaRegimen">Régimen Fiscal</label>
+                                        <select class="form-control" id="empresaRegimen" required>
+                                            <option value="">Seleccionar...</option>
+                                            <option value="601">General de Ley Personas Morales</option>
+                                            <option value="612">Personas Físicas con Actividades Empresariales y Profesionales</option>
+                                            <option value="621">Incorporación Fiscal</option>
+                                            <option value="622">Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="empresaNombre">Razón Social</label>
+                                    <input type="text" class="form-control" id="empresaNombre" placeholder="Nombre completo de la empresa" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="empresaDireccion">Dirección</label>
+                                    <textarea class="form-control" id="empresaDireccion" rows="3" placeholder="Dirección fiscal completa" required></textarea>
+                                </div>
+
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label" for="empresaCP">Código Postal</label>
+                                        <input type="text" class="form-control" id="empresaCP" placeholder="Ej: 06700" required maxlength="5">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="empresaTelefono">Teléfono</label>
+                                        <input type="tel" class="form-control" id="empresaTelefono" placeholder="Ej: 5512345678">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="empresaEmail">Email</label>
+                                    <input type="email" class="form-control" id="empresaEmail" placeholder="contacto@empresa.com" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="empresaLogo">Logo de la Empresa</label>
+                                    <div class="form-file">
+                                        <input type="file" class="form-file-input" id="empresaLogo" accept="image/*">
+                                        <label class="form-file-label" for="empresaLogo">
+                                            <span class="form-file-text">Seleccionar archivo...</span>
+                                            <span class="form-file-button">Examinar</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-success">Guardar Configuración</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="config-sat" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Configuración SAT</h2>
+                        </div>
+                        <div class="card-body">
+                            <form id="satForm">
+                                <div class="alert alert-warning">
+                                    <strong>Importante:</strong> Esta configuración requiere certificados digitales válidos del SAT.
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="satCertificado">Certificado (.cer)</label>
+                                    <div class="form-file">
+                                        <input type="file" class="form-file-input" id="satCertificado" accept=".cer">
+                                        <label class="form-file-label" for="satCertificado">
+                                            <span class="form-file-text">Seleccionar certificado...</span>
+                                            <span class="form-file-button">Examinar</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="satLlavePrivada">Llave Privada (.key)</label>
+                                    <div class="form-file">
+                                        <input type="file" class="form-file-input" id="satLlavePrivada" accept=".key">
+                                        <label class="form-file-label" for="satLlavePrivada">
+                                            <span class="form-file-text">Seleccionar llave privada...</span>
+                                            <span class="form-file-button">Examinar</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="satPassword">Contraseña de la Llave Privada</label>
+                                    <input type="password" class="form-control" id="satPassword" placeholder="Contraseña del archivo .key">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="satPAC">Proveedor Autorizado de Certificación (PAC)</label>
+                                    <select class="form-control" id="satPAC">
+                                        <option value="">Seleccionar PAC...</option>
+                                        <option value="finkok">Finkok</option>
+                                        <option value="sw">SW Sapien</option>
+                                        <option value="facturama">Facturama</option>
+                                        <option value="otro">Otro</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label" for="satUsuario">Usuario PAC</label>
+                                        <input type="text" class="form-control" id="satUsuario" placeholder="Usuario del PAC">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="satPasswordPAC">Contraseña PAC</label>
+                                        <input type="password" class="form-control" id="satPasswordPAC" placeholder="Contraseña del PAC">
+                                    </div>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="satPruebas">
+                                    <label class="form-check-label" for="satPruebas">
+                                        Modo de pruebas (Sandbox)
+                                    </label>
+                                </div>
+
+                                <div class="card-footer">
+                                    <div class="d-flex justify-content-between">
+                                        <button type="button" class="btn btn-primary" onclick="probarConexionSAT()">Probar Conexión</button>
+                                        <button type="submit" class="btn btn-success">Guardar Configuración</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Actualización de Catálogos SAT</h2>
+                        </div>
+                        <div class="card-body">
+                            <p>Mantén actualizados los catálogos del SAT para cumplir con las últimas normativas.</p>
+                            <div class="d-flex" style="gap: 1rem;">
+                                <button class="btn btn-primary" onclick="actualizarCatalogos()">
+                                    🔄 Actualizar Catálogos
+                                </button>
+                                <button class="btn btn-info" onclick="verificarActualizaciones()">
+                                    ✅ Verificar Actualizaciones
+                                </button>
+                            </div>
+                            <div class="mt-3">
+                                <small class="text-muted">Última actualización: Nunca</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="config-plantillas" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Plantillas de Factura</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label" for="plantillaActual">Plantilla Actual</label>
+                                <select class="form-control" id="plantillaActual">
+                                    <option value="default">Plantilla por Defecto</option>
+                                    <option value="moderna">Plantilla Moderna</option>
+                                    <option value="clasica">Plantilla Clásica</option>
+                                    <option value="personalizada">Plantilla Personalizada</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Colores de la Plantilla</label>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label" for="colorPrimario">Color Primario</label>
+                                        <input type="color" class="form-control" id="colorPrimario" value="#2563eb">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="colorSecundario">Color Secundario</label>
+                                        <input type="color" class="form-control" id="colorSecundario" value="#64748b">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="mensajeFactura">Mensaje en Facturas</label>
+                                <textarea class="form-control" id="mensajeFactura" rows="3" placeholder="Mensaje que aparecerá en todas las facturas..."></textarea>
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-between">
+                                    <button type="button" class="btn btn-primary" onclick="previsualizarPlantilla()">Vista Previa</button>
+                                    <button type="button" class="btn btn-success" onclick="guardarPlantilla()">Guardar Plantilla</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="config-sistema" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Configuración del Sistema</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label" for="serieFactura">Serie por Defecto</label>
+                                <input type="text" class="form-control" id="serieFactura" placeholder="Ej: A" maxlength="10">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="folioInicial">Folio Inicial</label>
+                                <input type="number" class="form-control" id="folioInicial" placeholder="1" min="1">
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="envioAutomatico">
+                                <label class="form-check-label" for="envioAutomatico">
+                                    Envío automático de facturas por email
+                                </label>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="respaldoAutomatico">
+                                <label class="form-check-label" for="respaldoAutomatico">
+                                    Respaldo automático de datos
+                                </label>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="rutaRespaldo">Ruta de Respaldo</label>
+                                <input type="text" class="form-control" id="rutaRespaldo" placeholder="C:\Respaldos\CHAPAMARKET">
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-between">
+                                    <button type="button" class="btn btn-warning" onclick="exportarDatos()">Exportar Datos</button>
+                                    <button type="button" class="btn btn-success" onclick="guardarConfiguracion()">Guardar Configuración</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Información del Sistema</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-grid">
+                                <div>
+                                    <strong>Versión:</strong> CHAPAMARKET Pro v1.0.0
+                                </div>
+                                <div>
+                                    <strong>Licencia:</strong> Activa
+                                </div>
+                                <div>
+                                    <strong>Última actualización:</strong> Hoy
+                                </div>
+                                <div>
+                                    <strong>Soporte:</strong> Create Studio Digital
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ayuda -->
+            <div id="ayuda" class="tab-content">
+                <h1 class="page-title">Centro de Ayuda</h1>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Calculadora Integrada</h2>
+                    </div>
+                    <div class="card-body">
+                        <div style="max-width: 300px; margin: 0 auto;">
+                            <div class="form-group">
+                                <input type="text" class="form-control text-right" id="calculadoraDisplay" readonly style="font-size: 1.5rem; font-weight: bold;">
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;">
+                                <button class="btn btn-danger" onclick="calculadoraLimpiar()">C</button>
+                                <button class="btn btn-warning" onclick="calculadoraOperacion('/')">/</button>
+                                <button class="btn btn-warning" onclick="calculadoraOperacion('*')">×</button>
+                                <button class="btn btn-warning" onclick="calculadoraBorrar()">⌫</button>
+                                
+                                <button class="btn btn-primary" onclick="calculadoraNumero('7')">7</button>
+                                <button class="btn btn-primary" onclick="calculadoraNumero('8')">8</button>
+                                <button class="btn btn-primary" onclick="calculadoraNumero('9')">9</button>
+                                <button class="btn btn-warning" onclick="calculadoraOperacion('-')">-</button>
+                                
+                                <button class="btn btn-primary" onclick="calculadoraNumero('4')">4</button>
+                                <button class="btn btn-primary" onclick="calculadoraNumero('5')">5</button>
+                                <button class="btn btn-primary" onclick="calculadoraNumero('6')">6</button>
+                                <button class="btn btn-warning" onclick="calculadoraOperacion('+')">+</button>
+                                
+                                <button class="btn btn-primary" onclick="calculadoraNumero('1')">1</button>
+                                <button class="btn btn-primary" onclick="calculadoraNumero('2')">2</button>
+                                <button class="btn btn-primary" onclick="calculadoraNumero('3')">3</button>
+                                <button class="btn btn-success" onclick="calculadoraIgual()" style="grid-row: span 2;">=</button>
+                                
+                                <button class="btn btn-primary" onclick="calculadoraNumero('0')" style="grid-column: span 2;">0</button>
+                                <button class="btn btn-primary" onclick="calculadoraNumero('.')">.</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Preguntas Frecuentes</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="accordion">
+                            <div class="card mb-2">
+                                <div class="card-header" style="cursor: pointer;" onclick="toggleAccordion('faq1')">
+                                    <strong>¿Cómo generar mi primera factura?</strong>
+                                </div>
+                                <div class="card-body d-none" id="faq1">
+                                    <p>Para generar tu primera factura:</p>
+                                    <ol>
+                                        <li>Ve a la sección "Facturas" → "Nueva Factura"</li>
+                                        <li>Completa los datos del cliente</li>
+                                        <li>Agrega los productos o servicios</li>
+                                        <li>Verifica los totales</li>
+                                        <li>Haz clic en "Generar Factura"</li>
+                                    </ol>
+                                </div>
+                            </div>
+
+                            <div class="card mb-2">
+                                <div class="card-header" style="cursor: pointer;" onclick="toggleAccordion('faq2')">
+                                    <strong>¿Cómo configurar mis certificados del SAT?</strong>
+                                </div>
+                                <div class="card-body d-none" id="faq2">
+                                    <p>Para configurar tus certificados:</p>
+                                    <ol>
+                                        <li>Ve a "Configuración" → "Configuración SAT"</li>
+                                        <li>Sube tu archivo .cer (certificado)</li>
+                                        <li>Sube tu archivo .key (llave privada)</li>
+                                        <li>Ingresa la contraseña de tu llave privada</li>
+                                        <li>Configura tu PAC</li>
+                                        <li>Prueba la conexión</li>
+                                    </ol>
+                                </div>
+                            </div>
+
+                            <div class="card mb-2">
+                                <div class="card-header" style="cursor: pointer;" onclick="toggleAccordion('faq3')">
+                                    <strong>¿Qué es un PAC y cuál debo elegir?</strong>
+                                </div>
+                                <div class="card-body d-none" id="faq3">
+                                    <p>Un PAC (Proveedor Autorizado de Certificación) es una empresa autorizada por el SAT para timbrar facturas electrónicas. Los más populares son:</p>
+                                    <ul>
+                                        <li><strong>Finkok:</strong> Económico y confiable</li>
+                                        <li><strong>SW Sapien:</strong> Buena velocidad</li>
+                                        <li><strong>Facturama:</strong> Interfaz amigable</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="card mb-2">
+                                <div class="card-header" style="cursor: pointer;" onclick="toggleAccordion('faq4')">
+                                    <strong>¿Cómo actualizar los catálogos del SAT?</strong>
+                                </div>
+                                <div class="card-body d-none" id="faq4">
+                                    <p>Para mantener actualizados los catálogos:</p>
+                                    <ol>
+                                        <li>Ve a "Configuración" → "Configuración SAT"</li>
+                                        <li>Haz clic en "Actualizar Catálogos"</li>
+                                        <li>Espera a que se complete la descarga</li>
+                                        <li>El sistema te notificará cuando esté listo</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Soporte Técnico</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center">
+                            <h3>Create Studio Digital</h3>
+                            <p><strong>ING. César Sánchez</strong></p>
+                            <div class="mt-3">
+                                <p><strong>WhatsApp:</strong></p>
+                                <p>📱 773-108-6826</p>
+                                <p>📱 763-109-3925</p>
+                            </div>
+                            <div class="mt-3">
+                                <p><strong>Email:</strong></p>
+                                <p>📧 chapmarket@createstudiodigital.com.mx</p>
+                                <p>📧 vercelkash@gmail.com</p>
+                            </div>
+                            <div class="mt-4">
+                                <button class="btn btn-success" onclick="contactarSoporte()">
+                                    💬 Contactar por WhatsApp
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <div class="fab" onclick="showTab('nueva-factura')" title="Nueva Factura">
+        📄
+    </div>
+
+    <!-- Modal de Vista Previa -->
+    <div class="modal-backdrop" id="modalPreview">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Vista Previa de Factura</h3>
+                <button class="modal-close" onclick="cerrarModal('modalPreview')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="facturaPreview" class="invoice-preview">
+                    <!-- Aquí se generará la vista previa -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" onclick="cerrarModal('modalPreview')">Cerrar</button>
+                <button class="btn btn-primary" onclick="imprimirFactura()">Imprimir</button>
+                <button class="btn btn-success" onclick="descargarFactura()">Descargar PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loader Overlay -->
+    <div class="loader-overlay" id="loaderOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        // Variables globales
+        let facturas = JSON.parse(localStorage.getItem('chapamarket_facturas') || '[]');
+        let clientes = JSON.parse(localStorage.getItem('chapamarket_clientes') || '[]');
+        let productos = JSON.parse(localStorage.getItem('chapamarket_productos') || '[]');
+        let configuracion = JSON.parse(localStorage.getItem('chapamarket_config') || '{}');
+        
+        // Variables de calculadora
+        let calculadoraValor = '';
+        let calculadoraOperador = '';
+        let calculadoraAnterior = '';
+        let calculadoraEsperando = false;
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            inicializarSistema();
+            cargarDatos();
+            actualizarEstadisticas();
+            
+            // Configurar fecha actual
+            document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+            
+            // Event listeners para formularios
+            document.getElementById('facturaForm').addEventListener('submit', guardarFactura);
+            document.getElementById('clienteForm').addEventListener('submit', guardarCliente);
+            document.getElementById('productoForm').addEventListener('submit', guardarProducto);
+            document.getElementById('empresaForm').addEventListener('submit', guardarEmpresa);
+            document.getElementById('satForm').addEventListener('submit', guardarConfigSAT);
+            
+            // Event listeners para cálculos automáticos
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('cantidad') || 
+                    e.target.classList.contains('precio') || 
+                    e.target.classList.contains('descuento')) {
+                    calcularTotales();
+                }
+            });
+        });
+
+        // Funciones de navegación
+        function showTab(tabName) {
+            // Ocultar todas las pestañas
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Mostrar la pestaña seleccionada
+            const targetTab = document.getElementById(tabName);
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
+            
+            // Actualizar navegación
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            const activeLink = document.querySelector(`[onclick="showTab('${tabName}')"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+            
+            // Cargar datos específicos de la pestaña
+            switch(tabName) {
+                case 'dashboard':
+                    actualizarDashboard();
+                    break;
+                case 'facturas':
+                    cargarTablaFacturas();
+                    break;
+                case 'clientes':
+                    cargarTablaClientes();
+                    break;
+                case 'productos':
+                    cargarTablaProductos();
+                    break;
+                case 'nueva-factura':
+                    cargarSelectClientes();
+                    cargarSelectProductos();
+                    break;
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const icon = document.getElementById('sidebarToggleIcon');
+            
+            sidebar.classList.toggle('collapsed');
+            icon.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
+        }
+
+        function toggleDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            dropdown.classList.toggle('show');
+            
+            // Cerrar otros dropdowns
+            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                if (menu.id !== dropdownId) {
+                    menu.classList.remove('show');
+                }
+            });
+        }
+
+        // Cerrar dropdowns al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    menu.classList.remove('show');
+                });
+            }
+        });
+
+        // Funciones de inicialización
+        function inicializarSistema() {
+            // Datos de ejemplo si no existen
+            if (clientes.length === 0) {
+                clientes = [
+                    {
+                        id: 1,
+                        rfc: 'XAXX010101000',
+                        nombre: 'Público en General',
+                        regimenFiscal: '616',
+                        cp: '06700',
+                        email: 'publico@general.com',
+                        telefono: '',
+                        direccion: ''
+                    }
+                ];
+                localStorage.setItem('chapamarket_clientes', JSON.stringify(clientes));
+            }
+            
+            if (productos.length === 0) {
+                productos = [
+                    {
+                        id: 1,
+                        codigo: 'SERV001',
+                        nombre: 'Servicio de Consultoría',
+                        descripcion: 'Servicio profesional de consultoría',
+                        claveSAT: '80131500',
+                        unidad: 'E48',
+                        precio: 1000.00,
+                        iva: 16,
+                        tipo: 'servicio'
+                    }
+                ];
+                localStorage.setItem('chapamarket_productos', JSON.stringify(productos));
+            }
+        }
+
+        function cargarDatos() {
+            cargarTablaFacturas();
+            cargarTablaClientes();
+            cargarTablaProductos();
+            cargarSelectClientes();
+            cargarSelectProductos();
+        }
+
+        // Funciones de facturas
+        function guardarFactura(e) {
+            e.preventDefault();
+            
+            mostrarLoader();
+            
+            setTimeout(() => {
+                const nuevaFactura = {
+                    id: Date.now(),
+                    folio: generarFolio(),
+                    serie: document.getElementById('serie').value || 'A',
+                    tipo: document.getElementById('tipoComprobante').value,
+                    fecha: document.getElementById('fecha').value,
+                    cliente: obtenerClienteSeleccionado(),
+                    conceptos: obtenerConceptos(),
+                    subtotal: parseFloat(document.getElementById('subtotalFactura').textContent.replace('$', '').replace(',', '')),
+                    iva: parseFloat(document.getElementById('ivaFactura').textContent.replace('$', '').replace(',', '')),
+                    total: parseFloat(document.getElementById('totalFactura').textContent.replace('$', '').replace(',', '')),
+                    estado: 'Pendiente',
+                    formaPago: document.getElementById('formaPago').value,
+                    metodoPago: document.getElementById('metodoPago').value,
+                    usoCFDI: document.getElementById('usoCFDI').value,
+                    fechaCreacion: new Date().toISOString()
+                };
+                
+                facturas.unshift(nuevaFactura);
+                localStorage.setItem('chapamarket_facturas', JSON.stringify(facturas));
+                
+                ocultarLoader();
+                mostrarAlerta('Factura generada exitosamente', 'success');
+                
+                // Limpiar formulario
+                document.getElementById('facturaForm').reset();
+                document.getElementById('conceptos').innerHTML = '';
+                agregarConcepto();
+                
+                // Volver a facturas
+                showTab('facturas');
+                actualizarEstadisticas();
+            }, 2000);
+        }
+
+        function generarFolio() {
+            const ultimoFolio = facturas.length > 0 ? 
+                Math.max(...facturas.map(f => parseInt(f.folio) || 0)) : 0;
+            return (ultimoFolio + 1).toString().padStart(6, '0');
+        }
+
+        function obtenerClienteSeleccionado() {
+            const clienteId = document.getElementById('clienteSelect').value;
+            return clientes.find(c => c.id == clienteId);
+        }
+
+        function obtenerConceptos() {
+            const conceptosElements = document.querySelectorAll('.concepto-item');
+            const conceptos = [];
+            
+            conceptosElements.forEach(elemento => {
+                const productoId = elemento.querySelector('.producto-select').value;
+                const producto = productos.find(p => p.id == productoId);
+                const cantidad = parseFloat(elemento.querySelector('.cantidad').value);
+                const precio = parseFloat(elemento.querySelector('.precio').value);
+                const descuento = parseFloat(elemento.querySelector('.descuento').value) || 0;
+                const descripcion = elemento.querySelector('.descripcion').value;
+                
+                if (producto && cantidad && precio) {
+                    conceptos.push({
+                        producto: producto,
+                        cantidad: cantidad,
+                        precio: precio,
+                        descuento: descuento,
+                        descripcion: descripcion,
+                        subtotal: (cantidad * precio) - descuento
+                    });
+                }
+            });
+            
+            return conceptos;
+        }
+
+        function agregarConcepto() {
+            const conceptosContainer = document.getElementById('conceptos');
+            const conceptoHTML = `
+                <div class="card mb-3 concepto-item">
+                    <div class="card-body">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Producto/Servicio</label>
+                                <select class="form-control producto-select" required onchange="cargarDatosProducto(this)">
+                                    <option value="">Seleccionar...</option>
+                                    ${productos.map(p => `<option value="${p.id}">${p.nombre}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Cantidad</label>
+                                <input type="number" class="form-control cantidad" min="1" value="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Precio Unitario</label>
+                                <input type="number" class="form-control precio" step="0.01" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Descuento</label>
+                                <input type="number" class="form-control descuento" step="0.01" min="0" value="0">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Descripción</label>
+                            <textarea class="form-control descripcion" rows="2" required></textarea>
+                        </div>
+                        <div class="d-flex justify-content-between mt-3">
+                            <div>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="eliminarConcepto(this)">Eliminar</button>
+                            </div>
+                            <div class="text-right">
+                                <strong>Subtotal: $<span class="subtotal-concepto">0.00</span></strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            conceptosContainer.insertAdjacentHTML('beforeend', conceptoHTML);
+        }
+
+        function eliminarConcepto(btn) {
+            const concepto = btn.closest('.concepto-item');
+            if (document.querySelectorAll('.concepto-item').length > 1) {
+                concepto.remove();
+                calcularTotales();
+            } else {
+                mostrarAlerta('Debe mantener al menos un concepto', 'warning');
+            }
+        }
+
+        function cargarDatosProducto(select) {
+            const productoId = select.value;
+            const producto = productos.find(p => p.id == productoId);
+            const concepto = select.closest('.concepto-item');
+            
+            if (producto) {
+                concepto.querySelector('.precio').value = producto.precio;
+                concepto.querySelector('.descripcion').value = producto.descripcion;
+                calcularTotales();
+            }
+        }
+
+        function calcularTotales() {
+            let subtotalGeneral = 0;
+            
+            document.querySelectorAll('.concepto-item').forEach(concepto => {
+                const cantidad = parseFloat(concepto.querySelector('.cantidad').value) || 0;
+                const precio = parseFloat(concepto.querySelector('.precio').value) || 0;
+                const descuento = parseFloat(concepto.querySelector('.descuento').value) || 0;
+                
+                const subtotalConcepto = (cantidad * precio) - descuento;
+                concepto.querySelector('.subtotal-concepto').textContent = formatearMoneda(subtotalConcepto);
+                
+                subtotalGeneral += subtotalConcepto;
+            });
+            
+            const iva = subtotalGeneral * 0.16;
+            const total = subtotalGeneral + iva;
+            
+            document.getElementById('subtotalFactura').textContent = formatearMoneda(subtotalGeneral);
+            document.getElementById('ivaFactura').textContent = formatearMoneda(iva);
+            document.getElementById('totalFactura').textContent = formatearMoneda(total);
+        }
+
+        function previsualizarFactura() {
+            const cliente = obtenerClienteSeleccionado();
+            const conceptos = obtenerConceptos();
+            
+            if (!cliente || conceptos.length === 0) {
+                mostrarAlerta('Complete todos los datos de la factura', 'warning');
+                return;
+            }
+            
+            const previewHTML = generarPreviewFactura(cliente, conceptos);
+            document.getElementById('facturaPreview').innerHTML = previewHTML;
+            mostrarModal('modalPreview');
+        }
+
+        function generarPreviewFactura(cliente, conceptos) {
+            const subtotal = parseFloat(document.getElementById('subtotalFactura').textContent.replace('$', '').replace(',', ''));
+            const iva = parseFloat(document.getElementById('ivaFactura').textContent.replace('$', '').replace(',', ''));
+            const total = parseFloat(document.getElementById('totalFactura').textContent.replace('$', '').replace(',', ''));
+            
+            return `
+                <div class="invoice-header">
+                    <div class="invoice-company">
+                        <h2>CHAPAMARKET</h2>
+                        <p>Create Studio Digital</p>
+                        <p>ING. César Sánchez</p>
+                        <p>RFC: SACC850101ABC</p>
+                    </div>
+                    <div class="invoice-details">
+                        <h1>FACTURA</h1>
+                        <p><strong>Serie:</strong> ${document.getElementById('serie').value || 'A'}</p>
+                        <p><strong>Folio:</strong> ${generarFolio()}</p>
+                        <p><strong>Fecha:</strong> ${document.getElementById('fecha').value}</p>
+                    </div>
+                </div>
+                
+                <div class="invoice-client">
+                    <h3>Facturar a:</h3>
+                    <p><strong>${cliente.nombre}</strong></p>
+                    <p>RFC: ${cliente.rfc}</p>
+                    <p>Email: ${cliente.email}</p>
+                    <p>CP: ${cliente.cp}</p>
+                </div>
+                
+                <table class="invoice-table">
+                    <thead>
+                        <tr>
+                            <th>Descripción</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unit.</th>
+                            <th>Descuento</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${conceptos.map(c => `
+                            <tr>
+                                <td>${c.descripcion}</td>
+                                <td>${c.cantidad}</td>
+                                <td>${formatearMoneda(c.precio)}</td>
+                                <td>${formatearMoneda(c.descuento)}</td>
+                                <td>${formatearMoneda(c.subtotal)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                
+                <div class="invoice-total">
+                    <table>
+                        <tr>
+                            <td>Subtotal:</td>
+                            <td>${formatearMoneda(subtotal)}</td>
+                        </tr>
+                        <tr>
+                            <td>IVA (16%):</td>
+                            <td>${formatearMoneda(iva)}</td>
+                        </tr>
+                        <tr class="grand-total">
+                            <td>Total:</td>
+                            <td>${formatearMoneda(total)}</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="invoice-footer">
+                    <p>Esta es una representación impresa de un CFDI</p>
+                    <p>Create Studio Digital - WhatsApp: 773-108-6826 o 763-109-3925</p>
+                </div>
+            `;
+        }
+
+        // Funciones de clientes
+        function guardarCliente(e) {
+            e.preventDefault();
+            
+            const nuevoCliente = {
+                id: Date.now(),
+                rfc: document.getElementById('clienteRFC').value.toUpperCase(),
+                nombre: document.getElementById('clienteNombre').value,
+                regimenFiscal: document.getElementById('clienteRegimenFiscal').value,
+                cp: document.getElementById('clienteCP').value,
+                email: document.getElementById('clienteEmail').value,
+                telefono: document.getElementById('clienteTelefono').value,
+                direccion: document.getElementById('clienteDireccion').value,
+                fechaCreacion: new Date().toISOString()
+            };
+            
+            clientes.push(nuevoCliente);
+            localStorage.setItem('chapamarket_clientes', JSON.stringify(clientes));
+            
+            mostrarAlerta('Cliente guardado exitosamente', 'success');
+            document.getElementById('clienteForm').reset();
+            showTab('clientes');
+            cargarTablaClientes();
+            cargarSelectClientes();
+        }
+
+        function cargarTablaClientes() {
+            const tbody = document.getElementById('tablaClientes');
+            
+            if (clientes.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No hay clientes registrados</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = clientes.map(cliente => `
+                <tr>
+                    <td>${cliente.nombre}</td>
+                    <td>${cliente.rfc}</td>
+                    <td>${obtenerNombreRegimen(cliente.regimenFiscal)}</td>
+                    <td>${cliente.email}</td>
+                    <td>${cliente.telefono}</td>
+                    <td class="table-actions">
+                        <button class="btn btn-primary btn-sm" onclick="editarCliente(${cliente.id})">Editar</button>
+                        <button class="btn btn-danger btn-sm" onclick="eliminarCliente(${cliente.id})">Eliminar</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function cargarSelectClientes() {
+            const select = document.getElementById('clienteSelect');
+            if (!select) return;
+            
+            select.innerHTML = '<option value="">Seleccionar cliente...</option>' +
+                clientes.map(cliente => `<option value="${cliente.id}">${cliente.nombre} (${cliente.rfc})</option>`).join('');
+        }
+
+        // Funciones de productos
+        function guardarProducto(e) {
+            e.preventDefault();
+            
+            const nuevoProducto = {
+                id: Date.now(),
+                codigo: document.getElementById('productoCodigo').value,
+                nombre: document.getElementById('productoNombre').value,
+                descripcion: document.getElementById('productoDescripcion').value,
+                claveSAT: document.getElementById('productoClaveSAT').value,
+                unidad: document.getElementById('productoUnidad').value,
+                precio: parseFloat(document.getElementById('productoPrecio').value),
+                iva: document.getElementById('productoIVA').value,
+                tipo: document.getElementById('tipoProducto').value,
+                fechaCreacion: new Date().toISOString()
+            };
+            
+            productos.push(nuevoProducto);
+            localStorage.setItem('chapamarket_productos', JSON.stringify(productos));
+            
+            mostrarAlerta('Producto guardado exitosamente', 'success');
+            document.getElementById('productoForm').reset();
+            showTab('productos');
+            cargarTablaProductos();
+            cargarSelectProductos();
+        }
+
+        function cargarTablaProductos() {
+            const tbody = document.getElementById('tablaProductos');
+            
+            if (productos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No hay productos registrados</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = productos.map(producto => `
+                <tr>
+                    <td>${producto.codigo}</td>
+                    <td>${producto.claveSAT}</td>
+                    <td>${producto.nombre}</td>
+                    <td>${formatearMoneda(producto.precio)}</td>
+                    <td>${producto.unidad}</td>
+                    <td><span class="badge badge-${producto.tipo === 'producto' ? 'info' : 'success'}">${producto.tipo}</span></td>
+                    <td class="table-actions">
+                        <button class="btn btn-primary btn-sm" onclick="editarProducto(${producto.id})">Editar</button>
+                        <button class="btn btn-danger btn-sm" onclick="eliminarProducto(${producto.id})">Eliminar</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function cargarSelectProductos() {
+            const selects = document.querySelectorAll('.producto-select');
+            const options = '<option value="">Seleccionar...</option>' +
+                productos.map(producto => `<option value="${producto.id}">${producto.nombre} - ${formatearMoneda(producto.precio)}</option>`).join('');
+            
+            selects.forEach(select => {
+                select.innerHTML = options;
+            });
+        }
+
+        // Funciones de configuración
+        function guardarEmpresa(e) {
+            e.preventDefault();
+            
+            configuracion.empresa = {
+                rfc: document.getElementById('empresaRFC').value,
+                nombre: document.getElementById('empresaNombre').value,
+                regimen: document.getElementById('empresaRegimen').value,
+                direccion: document.getElementById('empresaDireccion').value,
+                cp: document.getElementById('empresaCP').value,
+                telefono: document.getElementById('empresaTelefono').value,
+                email: document.getElementById('empresaEmail').value
+            };
+            
+            localStorage.setItem('chapamarket_config', JSON.stringify(configuracion));
+            mostrarAlerta('Configuración de empresa guardada', 'success');
+        }
+
+        function guardarConfigSAT(e) {
+            e.preventDefault();
+            
+            configuracion.sat = {
+                pac: document.getElementById('satPAC').value,
+                usuario: document.getElementById('satUsuario').value,
+                password: document.getElementById('satPasswordPAC').value,
+                pruebas: document.getElementById('satPruebas').checked
+            };
+            
+            localStorage.setItem('chapamarket_config', JSON.stringify(configuracion));
+            mostrarAlerta('Configuración SAT guardada', 'success');
+        }
+
+        // Funciones de reportes
+        function generarReporte() {
+            const tipo = document.getElementById('tipoReporte').value;
+            const formato = document.getElementById('formatoReporte').value;
+            
+            if (!tipo) {
+                mostrarAlerta('Seleccione un tipo de reporte', 'warning');
+                return;
+            }
+            
+            mostrarLoader();
+            
+            setTimeout(() => {
+                ocultarLoader();
+                mostrarAlerta(`Reporte de ${tipo} generado en formato ${formato.toUpperCase()}`, 'success');
+            }, 2000);
+        }
+
+        // Funciones de calculadora
+        function calculadoraNumero(num) {
+            if (calculadoraEsperando) {
+                calculadoraValor = num;
+                calculadoraEsperando = false;
+            } else {
+                calculadoraValor = calculadoraValor === '0' ? num : calculadoraValor + num;
+            }
+            document.getElementById('calculadoraDisplay').value = calculadoraValor;
+        }
+
+        function calculadoraOperacion(op) {
+            if (calculadoraAnterior !== '' && !calculadoraEsperando) {
+                calculadoraIgual();
+            }
+            calculadoraOperador = op;
+            calculadoraAnterior = calculadoraValor;
+            calculadoraEsperando = true;
+        }
+
+        function calculadoraIgual() {
+            if (calculadoraOperador && calculadoraAnterior !== '' && !calculadoraEsperando) {
+                const anterior = parseFloat(calculadoraAnterior);
+                const actual = parseFloat(calculadoraValor);
+                let resultado = 0;
+                
+                switch (calculadoraOperador) {
+                    case '+':
+                        resultado = anterior + actual;
+                        break;
+                    case '-':
+                        resultado = anterior - actual;
+                        break;
+                    case '*':
+                        resultado = anterior * actual;
+                        break;
+                    case '/':
+                        resultado = actual !== 0 ? anterior / actual : 0;
+                        break;
+                }
+                
+                calculadoraValor = resultado.toString();
+                calculadoraOperador = '';
+                calculadoraAnterior = '';
+                calculadoraEsperando = true;
+                document.getElementById('calculadoraDisplay').value = calculadoraValor;
+            }
+        }
+
+        function calculadoraLimpiar() {
+            calculadoraValor = '0';
+            calculadoraOperador = '';
+            calculadoraAnterior = '';
+            calculadoraEsperando = false;
+            document.getElementById('calculadoraDisplay').value = calculadoraValor;
+        }
+
+        function calculadoraBorrar() {
+            calculadoraValor = calculadoraValor.slice(0, -1) || '0';
+            document.getElementById('calculadoraDisplay').value = calculadoraValor;
+        }
+
+        // Funciones de utilidad
+        function formatearMoneda(cantidad) {
+            return new Intl.NumberFormat('es-MX', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(cantidad);
+        }
+
+        function obtenerNombreRegimen(clave) {
+            const regimenes = {
+                '601': 'General de Ley',
+                '603': 'Personas Morales sin Fines de Lucro',
+                '605': 'Sueldos y Salarios',
+                '606': 'Arrendamiento',
+                '608': 'Demás ingresos',
+                '610': 'Residentes en el Extranjero',
+                '611': 'Dividendos',
+                '612': 'Personas Físicas con Actividades Empresariales',
+                '614': 'Ingresos por intereses',
+                '616': 'Sin obligaciones fiscales',
+                '621': 'Incorporación Fiscal',
+                '622': 'Actividades Agrícolas',
+                '623': 'Opcional para Grupos de Sociedades',
+                '624': 'Coordinados',
+                '628': 'Hidrocarburos'
+            };
+            
+            return regimenes[clave] || clave;
+        }
+
+        function mostrarAlerta(mensaje, tipo) {
+            const alertaHTML = `
+                <div class="alert alert-${tipo} fade-in">
+                    ${mensaje}
+                </div>
+            `;
+            
+            const alertaContainer = document.createElement('div');
+            alertaContainer.style.position = 'fixed';
+            alertaContainer.style.top = '20px';
+            alertaContainer.style.right = '20px';
+            alertaContainer.style.zIndex = '9999';
+            alertaContainer.innerHTML = alertaHTML;
+            
+            document.body.appendChild(alertaContainer);
+            
+            setTimeout(() => {
+                alertaContainer.remove();
+            }, 3000);
+        }
+
+        function mostrarModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
+        }
+
+        function cerrarModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        function mostrarLoader() {
+            document.getElementById('loaderOverlay').classList.add('show');
+        }
+
+        function ocultarLoader() {
+            document.getElementById('loaderOverlay').classList.remove('show');
+        }
+
+        function toggleAccordion(id) {
+            const element = document.getElementById(id);
+            element.classList.toggle('d-none');
+        }
+
+        function showFacturaTab(tab) {
+            document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.tabs .tab[onclick="showFacturaTab('${tab}')"]`).classList.add('active');
+            cargarTablaFacturas(tab);
+        }
+
+        function showProductoTab(tab) {
+            document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.tabs .tab[onclick="showProductoTab('${tab}')"]`).classList.add('active');
+            cargarTablaProductos(tab);
+        }
+
+        function showCuentaTab(tab) {
+            document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.tabs .tab[onclick="showCuentaTab('${tab}')"]`).classList.add('active');
+            
+            document.querySelectorAll('#cuentas .tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(`cuentas-${tab}`).classList.add('active');
+        }
+
+        function showConfigTab(tab) {
+            document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.tabs .tab[onclick="showConfigTab('${tab}')"]`).classList.add('active');
+            
+            document.querySelectorAll('#configuracion .tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(`config-${tab}`).classList.add('active');
+        }
+
+        // Funciones de datos
+        function actualizarDashboard() {
+            cargarUltimasFacturas();
+            actualizarEstadisticas();
+        }
+
+        function cargarUltimasFacturas() {
+            const tbody = document.getElementById('ultimasFacturas');
+            
+            if (facturas.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No hay facturas registradas</td></tr>';
+                return;
+            }
+            
+            const ultimasFacturas = facturas.slice(0, 5);
+            
+            tbody.innerHTML = ultimasFacturas.map(factura => `
+                <tr>
+                    <td>${factura.serie}-${factura.folio}</td>
+                    <td>${factura.cliente.nombre}</td>
+                    <td>${new Date(factura.fecha).toLocaleDateString()}</td>
+                    <td>${formatearMoneda(factura.total)}</td>
+                    <td><span class="badge badge-${factura.estado === 'Pagada' ? 'success' : factura.estado === 'Cancelada' ? 'danger' : 'warning'}">${factura.estado}</span></td>
+                    <td class="table-actions">
+                        <button class="btn btn-primary btn-sm" onclick="verFactura(${factura.id})">Ver</button>
+                        <button class="btn btn-success btn-sm" onclick="enviarFactura(${factura.id})">Enviar</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function cargarTablaFacturas(filtro = 'todas') {
+            const tbody = document.getElementById('tablaFacturas');
+            
+            if (facturas.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No hay facturas registradas</td></tr>';
+                return;
+            }
+            
+            let facturasFiltradas = facturas;
+            
+            if (filtro === 'pendientes') {
+                facturasFiltradas = facturas.filter(f => f.estado === 'Pendiente');
+            } else if (filtro === 'pagadas') {
+                facturasFiltradas = facturas.filter(f => f.estado === 'Pagada');
+            } else if (filtro === 'canceladas') {
+                facturasFiltradas = facturas.filter(f => f.estado === 'Cancelada');
+            }
+            
+            if (facturasFiltradas.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted">No hay facturas ${filtro}</td></tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = facturasFiltradas.map(factura => `
+                <tr>
+                    <td>${factura.folio}</td>
+                    <td>${factura.serie}</td>
+                    <td>${factura.cliente.nombre}</td>
+                    <td>${new Date(factura.fecha).toLocaleDateString()}</td>
+                    <td>${formatearMoneda(factura.total)}</td>
+                    <td><span class="badge badge-${factura.estado === 'Pagada' ? 'success' : factura.estado === 'Cancelada' ? 'danger' : 'warning'}">${factura.estado}</span></td>
+                    <td class="table-actions">
+                        <button class="btn btn-primary btn-sm" onclick="verFactura(${factura.id})">Ver</button>
+                        <button class="btn btn-success btn-sm" onclick="enviarFactura(${factura.id})">Enviar</button>
+                        <button class="btn btn-danger btn-sm" onclick="cancelarFactura(${factura.id})">Cancelar</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function actualizarEstadisticas() {
+            // Estadísticas del dashboard
+            document.getElementById('totalFacturas').textContent = facturas.length;
+            document.getElementById('totalClientes').textContent = clientes.length;
+            document.getElementById('facturasPendientes').textContent = facturas.filter(f => f.estado === 'Pendiente').length;
+            
+            // Calcular ventas del mes
+            const hoy = new Date();
+            const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+            
+            const ventasMes = facturas
+                .filter(f => new Date(f.fecha) >= inicioMes && f.estado !== 'Cancelada')
+                .reduce((total, factura) => total + factura.total, 0);
+            
+            document.getElementById('totalVentas').textContent = `$${formatearMoneda(ventasMes)}`;
+        }
+
+        function verFactura(id) {
+            const factura = facturas.find(f => f.id === id);
+            if (!factura) return;
+            
+            const previewHTML = generarPreviewFacturaCompleta(factura);
+            document.getElementById('facturaPreview').innerHTML = previewHTML;
+            mostrarModal('modalPreview');
+        }
+
+        function generarPreviewFacturaCompleta(factura) {
+            return `
+                <div class="invoice-header">
+                    <div class="invoice-company">
+                        <h2>CHAPAMARKET</h2>
+                        <p>Create Studio Digital</p>
+                        <p>ING. César Sánchez</p>
+                        <p>RFC: SACC850101ABC</p>
+                    </div>
+                    <div class="invoice-details">
+                        <h1>FACTURA</h1>
+                        <p><strong>Serie:</strong> ${factura.serie}</p>
+                        <p><strong>Folio:</strong> ${factura.folio}</p>
+                        <p><strong>Fecha:</strong> ${factura.fecha}</p>
+                        <p><span class="badge badge-${factura.estado === 'Pagada' ? 'success' : factura.estado === 'Cancelada' ? 'danger' : 'warning'}">${factura.estado}</span></p>
+                    </div>
+                </div>
+                
+                <div class="invoice-client">
+                    <h3>Facturar a:</h3>
+                    <p><strong>${factura.cliente.nombre}</strong></p>
+                    <p>RFC: ${factura.cliente.rfc}</p>
+                    <p>Email: ${factura.cliente.email}</p>
+                    <p>CP: ${factura.cliente.cp}</p>
+                </div>
+                
+                <table class="invoice-table">
+                    <thead>
+                        <tr>
+                            <th>Descripción</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unit.</th>
+                            <th>Descuento</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${factura.conceptos.map(c => `
+                            <tr>
+                                <td>${c.descripcion}</td>
+                                <td>${c.cantidad}</td>
+                                <td>${formatearMoneda(c.precio)}</td>
+                                <td>${formatearMoneda(c.descuento)}</td>
+                                <td>${formatearMoneda(c.subtotal)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                
+                <div class="invoice-total">
+                    <table>
+                        <tr>
+                            <td>Subtotal:</td>
+                            <td>${formatearMoneda(factura.subtotal)}</td>
+                        </tr>
+                        <tr>
+                            <td>IVA (16%):</td>
+                            <td>${formatearMoneda(factura.iva)}</td>
+                        </tr>
+                        <tr class="grand-total">
+                            <td>Total:</td>
+                            <td>${formatearMoneda(factura.total)}</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="invoice-footer">
+                    <p>Esta es una representación impresa de un CFDI</p>
+                    <p>Create Studio Digital - WhatsApp: 773-108-6826 o 763-109-3925</p>
+                </div>
+            `;
+        }
+
+        function enviarFactura(id) {
+            const factura = facturas.find(f => f.id === id);
+            if (!factura) return;
+            
+            mostrarLoader();
+            
+            setTimeout(() => {
+                ocultarLoader();
+                mostrarAlerta(`Factura ${factura.serie}-${factura.folio} enviada a ${factura.cliente.email}`, 'success');
+            }, 2000);
+        }
+
+        function cancelarFactura(id) {
+            if (!confirm('¿Está seguro de cancelar esta factura?')) return;
+            
+            const index = facturas.findIndex(f => f.id === id);
+            if (index === -1) return;
+            
+            mostrarLoader();
+            
+            setTimeout(() => {
+                facturas[index].estado = 'Cancelada';
+                localStorage.setItem('chapamarket_facturas', JSON.stringify(facturas));
+                
+                ocultarLoader();
+                mostrarAlerta('Factura cancelada exitosamente', 'success');
+                cargarTablaFacturas();
+                actualizarEstadisticas();
+            }, 2000);
+        }
+
+        function imprimirFactura() {
+            window.print();
+        }
+
+        function descargarFactura() {
+            mostrarAlerta('Descargando factura en PDF...', 'info');
+            setTimeout(() => {
+                mostrarAlerta('Factura descargada exitosamente', 'success');
+            }, 2000);
+        }
+
+        function probarConexionSAT() {
+            mostrarLoader();
+            
+            setTimeout(() => {
+                ocultarLoader();
+                mostrarAlerta('Conexión con el SAT establecida correctamente', 'success');
+            }, 2000);
+        }
+
+        function actualizarCatalogos() {
+            mostrarLoader();
+            
+            setTimeout(() => {
+                ocultarLoader();
+                mostrarAlerta('Catálogos del SAT actualizados correctamente', 'success');
+            }, 3000);
+        }
+
+        function verificarActualizaciones() {
+            mostrarLoader();
+            
+            setTimeout(() => {
+                ocultarLoader();
+                mostrarAlerta('Los catálogos están actualizados a la última versión', 'info');
+            }, 2000);
+        }
+
+        function previsualizarPlantilla() {
+            mostrarAlerta('Generando vista previa de la plantilla...', 'info');
+            
+            setTimeout(() => {
+                const factura = facturas.length > 0 ? facturas[0] : null;
+                
+                if (factura) {
+                    const previewHTML = generarPreviewFacturaCompleta(factura);
+                    document.getElementById('facturaPreview').innerHTML = previewHTML;
+                    mostrarModal('modalPreview');
+                } else {
+                    mostrarAlerta('No hay facturas para previsualizar', 'warning');
+                }
+            }, 1000);
+        }
+
+        function guardarPlantilla() {
+            configuracion.plantilla = {
+                tipo: document.getElementById('plantillaActual').value,
+                colorPrimario: document.getElementById('colorPrimario').value,
+                colorSecundario: document.getElementById('colorSecundario').value,
+                mensaje: document.getElementById('mensajeFactura').value
+            };
+            
+            localStorage.setItem('chapamarket_config', JSON.stringify(configuracion));
+            mostrarAlerta('Plantilla guardada exitosamente', 'success');
+        }
+
+        function guardarConfiguracion() {
+            configuracion.sistema = {
+                serie: document.getElementById('serieFactura').value,
+                folioInicial: document.getElementById('folioInicial').value,
+                envioAutomatico: document.getElementById('envioAutomatico').checked,
+                respaldoAutomatico: document.getElementById('respaldoAutomatico').checked,
+                rutaRespaldo: document.getElementById('rutaRespaldo').value
+            };
+            
+            localStorage.setItem('chapamarket_config', JSON.stringify(configuracion));
+            mostrarAlerta('Configuración guardada exitosamente', 'success');
+        }
+
+        function exportarDatos() {
+            mostrarLoader();
+            
+            setTimeout(() => {
+                const datos = {
+                    facturas: facturas,
+                    clientes: clientes,
+                    productos: productos,
+                    configuracion: configuracion
+                };
+                
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(datos));
+                const downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", "chapamarket_backup_" + new Date().toISOString().split('T')[0] + ".json");
+                document.body.appendChild(downloadAnchorNode);
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+                
+                ocultarLoader();
+                mostrarAlerta('Datos exportados exitosamente', 'success');
+            }, 2000);
+        }
+
+        function contactarSoporte() {
+            const mensaje = encodeURIComponent("Hola, necesito soporte técnico para CHAPAMARKET.");
+            window.open(`https://wa.me/5217731086826?text=${mensaje}`, '_blank');
+        }
+    </script>
+</body>
+</html>

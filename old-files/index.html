@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Manager Pro - Gestor de Licencias</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #7b2cbf 0%, #5a189a 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e9ecef;
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            padding: 1rem 2rem;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 1rem;
+            color: #6c757d;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: #7b2cbf;
+            border-bottom-color: #7b2cbf;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #7b2cbf;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #7b2cbf 0%, #5a189a 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(123, 44, 191, 0.4);
+        }
+
+        .btn-full {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .license-result {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            border-left: 4px solid #28a745;
+        }
+
+        .license-key {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #e74c3c;
+            background: white;
+            padding: 1rem;
+            border-radius: 4px;
+            border: 2px dashed #dee2e6;
+            margin: 1rem 0;
+            word-break: break-all;
+        }
+
+        .validator-result {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .valid {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .invalid {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: #7b2cbf;
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .contact-info {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                text-align: center;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🔑 Key Manager Pro</h1>
+            <p>Sistema Profesional de Gestión de Licencias</p>
+        </div>
+
+        <!-- Main Card -->
+        <div class="main-card">
+            <div class="card-header">
+                <h2>Generador y Validador de Licencias</h2>
+                <p>Crea y valida licencias de software de forma segura</p>
+            </div>
+
+            <div class="card-body">
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab active" onclick="showTab('generator')">
+                        🔧 Generar Licencia
+                    </button>
+                    <button class="tab" onclick="showTab('validator')">
+                        ✅ Validar Licencia
+                    </button>
+                    <button class="tab" onclick="showTab('manager')">
+                        📊 Gestionar Clientes
+                    </button>
+                </div>
+
+                <!-- Generator Tab -->
+                <div id="generator" class="tab-content active">
+                    <h3>Generar Nueva Licencia</h3>
+                    <form onsubmit="generateLicense(event)">
+                        <div class="form-group">
+                            <label for="clientName">Nombre del Cliente:</label>
+                            <input type="text" id="clientName" required placeholder="Ej: Juan Pérez">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="clientEmail">Email del Cliente:</label>
+                            <input type="email" id="clientEmail" required placeholder="cliente@email.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="licenseType">Tipo de Licencia:</label>
+                            <select id="licenseType" required>
+                                <option value="">Seleccionar tipo</option>
+                                <option value="trial">Prueba (7 días)</option>
+                                <option value="monthly">Mensual (30 días)</option>
+                                <option value="annual">Anual (365 días)</option>
+                                <option value="lifetime">De por vida</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productName">Producto:</label>
+                            <input type="text" id="productName" required placeholder="Nombre del software">
+                        </div>
+
+                        <button type="submit" class="btn btn-full">
+                            🔑 Generar Licencia
+                        </button>
+                    </form>
+
+                    <div id="licenseOutput"></div>
+                </div>
+
+                <!-- Validator Tab -->
+                <div id="validator" class="tab-content">
+                    <h3>Validar Licencia Existente</h3>
+                    <form onsubmit="validateLicense(event)">
+                        <div class="form-group">
+                            <label for="licenseKey">Clave de Licencia:</label>
+                            <input type="text" id="licenseKey" required placeholder="Ej: TRIAL-ABC12345-DEF67890">
+                        </div>
+
+                        <button type="submit" class="btn btn-full">
+                            ✅ Validar Licencia
+                        </button>
+                    </form>
+
+                    <div id="validationOutput"></div>
+                </div>
+
+                <!-- Manager Tab -->
+                <div id="manager" class="tab-content">
+                    <h3>Gestión de Clientes</h3>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">👥</div>
+                            <h4>Clientes Registrados</h4>
+                            <p id="clientCount">0</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🔑</div>
+                            <h4>Licencias Activas</h4>
+                            <p id="activeCount">0</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">⏰</div>
+                            <h4>Licencias de Prueba</h4>
+                            <p id="trialCount">0</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">💎</div>
+                            <h4>Licencias Premium</h4>
+                            <p id="premiumCount">0</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 2rem;">
+                        <button class="btn" onclick="exportData()">
+                            📥 Exportar Datos
+                        </button>
+                        <button class="btn" onclick="clearData()" style="background: #dc3545; margin-left: 1rem;">
+                            🗑️ Limpiar Datos
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="contact-info">
+            <h3>Create Studio Digital</h3>
+            <p><strong>ING. César Sánchez</strong></p>
+            <p>📱 WhatsApp: 773-108-6826 o 763-109-3925</p>
+            <p>📧 Email: kashtaman@createstudiodigital.com</p>
+        </div>
+    </div>
+
+    <script>
+        // Datos almacenados localmente
+        let licenseData = JSON.parse(localStorage.getItem('keyManagerData')) || [];
+
+        // Función para mostrar tabs
+        function showTab(tabName) {
+            // Ocultar todos los tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Mostrar tab seleccionado
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Actualizar estadísticas si es el tab manager
+            if (tabName === 'manager') {
+                updateStats();
+            }
+        }
+
+        // Generar licencia
+        function generateLicense(event) {
+            event.preventDefault();
+
+            const clientName = document.getElementById('clientName').value;
+            const clientEmail = document.getElementById('clientEmail').value;
+            const licenseType = document.getElementById('licenseType').value;
+            const productName = document.getElementById('productName').value;
+
+            // Generar ID único
+            const licenseId = generateUniqueId();
+            
+            // Calcular fecha de expiración
+            const now = new Date();
+            let expirationDate = new Date(now);
+            
+            switch(licenseType) {
+                case 'trial':
+                    expirationDate.setDate(now.getDate() + 7);
+                    break;
+                case 'monthly':
+                    expirationDate.setMonth(now.getMonth() + 1);
+                    break;
+                case 'annual':
+                    expirationDate.setFullYear(now.getFullYear() + 1);
+                    break;
+                case 'lifetime':
+                    expirationDate.setFullYear(now.getFullYear() + 100);
+                    break;
+            }
+
+            // Crear clave de licencia
+            const prefix = licenseType.toUpperCase().substring(0, 5);
+            const hash = generateHash(clientEmail + productName);
+            const licenseKey = `${prefix}-${licenseId}-${hash}`;
+
+            // Crear objeto de licencia
+            const license = {
+                id: licenseId,
+                key: licenseKey,
+                clientName,
+                clientEmail,
+                productName,
+                type: licenseType,
+                createdDate: now.toISOString(),
+                expirationDate: expirationDate.toISOString(),
+                status: 'active'
+            };
+
+            // Guardar en localStorage
+            licenseData.push(license);
+            localStorage.setItem('keyManagerData', JSON.stringify(licenseData));
+
+            // Mostrar resultado
+            displayLicenseResult(license);
+
+            // Limpiar formulario
+            event.target.reset();
+        }
+
+        // Validar licencia
+        function validateLicense(event) {
+            event.preventDefault();
+
+            const licenseKey = document.getElementById('licenseKey').value.trim().toUpperCase();
+            const license = licenseData.find(l => l.key === licenseKey);
+
+            let resultHTML = '';
+
+            if (license) {
+                const now = new Date();
+                const expiration = new Date(license.expirationDate);
+                const isExpired = now > expiration;
+
+                if (isExpired) {
+                    resultHTML = `
+                        <div class="validator-result invalid">
+                            <h4>❌ Licencia Expirada</h4>
+                            <p><strong>Cliente:</strong> ${license.clientName}</p>
+                            <p><strong>Producto:</strong> ${license.productName}</p>
+                            <p><strong>Tipo:</strong> ${license.type}</p>
+                            <p><strong>Expiró:</strong> ${new Date(license.expirationDate).toLocaleDateString()}</p>
+                        </div>
+                    `;
+                } else {
+                    const daysLeft = Math.ceil((expiration - now) / (1000 * 60 * 60 * 24));
+                    resultHTML = `
+                        <div class="validator-result valid">
+                            <h4>✅ Licencia Válida</h4>
+                            <p><strong>Cliente:</strong> ${license.clientName}</p>
+                            <p><strong>Producto:</strong> ${license.productName}</p>
+                            <p><strong>Tipo:</strong> ${license.type}</p>
+                            <p><strong>Días restantes:</strong> ${daysLeft}</p>
+                            <p><strong>Expira:</strong> ${expiration.toLocaleDateString()}</p>
+                        </div>
+                    `;
+                }
+            } else {
+                resultHTML = `
+                    <div class="validator-result invalid">
+                        <h4>❌ Licencia No Válida</h4>
+                        <p>La clave de licencia ingresada no existe o es incorrecta.</p>
+                        <p>Contacta a soporte para obtener ayuda.</p>
+                    </div>
+                `;
+            }
+
+            document.getElementById('validationOutput').innerHTML = resultHTML;
+        }
+
+        // Mostrar resultado de licencia generada
+        function displayLicenseResult(license) {
+            const resultHTML = `
+                <div class="license-result">
+                    <h4>✅ Licencia Generada Exitosamente</h4>
+                    <div class="license-key">${license.key}</div>
+                    <p><strong>Cliente:</strong> ${license.clientName}</p>
+                    <p><strong>Email:</strong> ${license.clientEmail}</p>
+                    <p><strong>Producto:</strong> ${license.productName}</p>
+                    <p><strong>Tipo:</strong> ${license.type}</p>
+                    <p><strong>Válida hasta:</strong> ${new Date(license.expirationDate).toLocaleDateString()}</p>
+                    <button class="btn" onclick="copyToClipboard('${license.key}')" style="margin-top: 1rem;">
+                        📋 Copiar Clave
+                    </button>
+                </div>
+            `;
+            document.getElementById('licenseOutput').innerHTML = resultHTML;
+        }
+
+        // Generar ID único
+        function generateUniqueId() {
+            return Math.random().toString(36).substr(2, 8).toUpperCase();
+        }
+
+        // Generar hash simple
+        function generateHash(input) {
+            let hash = 0;
+            for (let i = 0; i < input.length; i++) {
+                const char = input.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return Math.abs(hash).toString(36).substr(0, 8).toUpperCase();
+        }
+
+        // Copiar al portapapeles
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Clave copiada al portapapeles');
+            });
+        }
+
+        // Actualizar estadísticas
+        function updateStats() {
+            const total = licenseData.length;
+            const active = licenseData.filter(l => new Date(l.expirationDate) > new Date()).length;
+            const trial = licenseData.filter(l => l.type === 'trial').length;
+            const premium = licenseData.filter(l => l.type === 'annual' || l.type === 'lifetime').length;
+
+            document.getElementById('clientCount').textContent = total;
+            document.getElementById('activeCount').textContent = active;
+            document.getElementById('trialCount').textContent = trial;
+            document.getElementById('premiumCount').textContent = premium;
+        }
+
+        // Exportar datos
+        function exportData() {
+            const dataStr = JSON.stringify(licenseData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'key-manager-data.json';
+            link.click();
+        }
+
+        // Limpiar datos
+        function clearData() {
+            if (confirm('¿Estás seguro de que quieres eliminar todos los datos?')) {
+                licenseData = [];
+                localStorage.removeItem('keyManagerData');
+                updateStats();
+                alert('Datos eliminados correctamente');
+            }
+        }
+
+        // Inicializar estadísticas al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+        });
+    </script>
+</body>
+</html>

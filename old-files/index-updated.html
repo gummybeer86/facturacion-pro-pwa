@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Studio Digital - CHAPAMARKET | Sistema de Facturación Electrónica</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#ff6b35">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="CHAPAMARKET">
+    <meta name="msapplication-TileImage" content="/assets/icons/icon-144x144.png">
+    <meta name="msapplication-TileColor" content="#667eea">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Icons -->
+    <link rel="icon" href="assets/favicon.ico">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
+    
+    <!-- Preload PWA Manager -->
+    <link rel="preload" href="assets/js/pwa-manager.js" as="script">
+    
+    <!-- Tu CSS existente aquí -->
+    <style>
+        /* Todo tu CSS existente permanece igual */
+        /* Solo agregamos algunos estilos para PWA */
+        
+        .pwa-features {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+        
+        .pwa-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .pwa-feature {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .pwa-feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .install-section {
+            background: #f8fafc;
+            padding: 80px 0;
+            text-align: center;
+        }
+        
+        .install-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .install-option {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .install-option:hover {
+            transform: translateY(-10px);
+        }
+        
+        .install-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .btn-install-main {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        
+        .btn-install-main:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255, 107, 53, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Tu contenido HTML existente permanece igual -->
+    <!-- Solo agregamos estas nuevas secciones -->
+    
+    <!-- Sección PWA Features (agregar después de la sección features) -->
+    <section class="pwa-features">
+        <div class="container">
+            <h2 class="section-title" style="color: white;">¡Instala CHAPAMARKET como App!</h2>
+            <p class="section-subtitle" style="color: rgba(255,255,255,0.9);">Disfruta de todas las ventajas de una aplicación nativa</p>
+            
+            <div class="pwa-grid">
+                <div class="pwa-feature">
+                    <div class="pwa-feature-icon">📱</div>
+                    <h3>Acceso Rápido</h3>
+                    <p>Icono en tu escritorio o pantalla de inicio para acceso instantáneo</p>
+                </div>
+                
+                <div class="pwa-feature">
+                    <div class="pwa-feature-icon">🔔</div>
+                    <h3>Notificaciones Push</h3>
+                    <p>Recibe alertas importantes sobre facturas, vencimientos y actualizaciones</p>
+                </div>
+                
+                <div class="pwa-feature">
+                    <div class="pwa-feature-icon">📡</div>
+                    <h3>Funciona Offline</h3>
+                    <p>Sigue trabajando sin internet, se sincroniza automáticamente</p>
+                </div>
+                
+                <div class="pwa-feature">
+                    <div class="pwa-feature-icon">🔄</div>
+                    <h3>Actualizaciones Automáticas</h3>
+                    <p>Siempre tendrás la última versión sin necesidad de descargar nada</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Sección de Instalación (agregar antes del footer) -->
+    <section class="install-section">
+        <div class="container">
+            <h2 class="section-title">Instala CHAPAMARKET</h2>
+            <p class="section-subtitle">Elige tu plataforma preferida</p>
+            
+            <div class="install-options">
+                <div class="install-option">
+                    <div class="install-icon">💻</div>
+                    <h3>Escritorio</h3>
+                    <p>Windows, Mac y Linux</p>
+                    <p>Funciona como una aplicación nativa con acceso completo a todas las funciones</p>
+                    <button class="btn-install-main" onclick="pwaManager?.installPWA()">
+                        Instalar en Escritorio
+                    </button>
+                </div>
+                
+                <div class="install-option">
+                    <div class="install-icon">📱</div>
+                    <h3>Móvil</h3>
+                    <p>iOS y Android</p>
+                    <p>Acceso rápido desde tu pantalla de inicio, notificaciones push incluidas</p>
+                    <button class="btn-install-main" onclick="pwaManager?.installPWA()">
+                        Instalar en Móvil
+                    </button>
+                </div>
+                
+                <div class="install-option">
+                    <div class="install-icon">🌐</div>
+                    <h3>Navegador Web</h3>
+                    <p>Cualquier dispositivo</p>
+                    <p>Accede directamente desde tu navegador favorito sin instalación</p>
+                    <a href="app/" class="btn-install-main">
+                        Usar en Navegador
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Tu footer existente permanece igual -->
+    
+    <!-- Scripts PWA -->
+    <script src="assets/js/pwa-manager.js"></script>
+    <script>
+        // Variable global para acceder al PWA Manager
+        let pwaManager;
+        
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', () => {
+            pwaManager = new PWAManager();
+        });
+    </script>
+</body>
+</html>

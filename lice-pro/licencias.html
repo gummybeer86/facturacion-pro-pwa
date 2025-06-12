@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Generador de Licencias - ChapaMarket</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 { 
+            color: #2c3e50; 
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        input:focus, select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52,152,219,0.2);
+        }
+        .generate-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .generate-btn:hover { 
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52,152,219,0.3);
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            text-align: left;
+            display: none;
+        }
+        .result.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        .result h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .result p {
+            margin: 10px 0;
+            color: #34495e;
+        }
+        .license-key {
+            font-family: monospace;
+            font-size: 18px;
+            color: #27ae60;
+            background: #f1f8e9;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generador de Licencias ChapaMarket</h1>
+        
+        <form id="licenseForm">
+            <div class="form-group">
+                <label for="nombre">Nombre del Cliente:</label>
+                <input type="text" id="nombre" name="nombre" required placeholder="Ingrese el nombre completo">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email del Cliente:</label>
+                <input type="email" id="email" name="email" required placeholder="ejemplo@correo.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="tipo">Tipo de Licencia:</label>
+                <select id="tipo" name="tipo" required>
+                    <option value="trial">Trial (15 días)</option>
+                    <option value="full">Full (1 año)</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="generate-btn">Generar Licencia</button>
+        </form>
+        
+        <div id="result" class="result">
+            <h3>Licencia Generada</h3>
+            <p><strong>Cliente:</strong> <span id="clientName"></span></p>
+            <p><strong>Email:</strong> <span id="clientEmail"></span></p>
+            <p><strong>Tipo:</strong> <span id="licenseType"></span></p>
+            <p><strong>Válida hasta:</strong> <span id="expiryDate"></span></p>
+            <div class="license-key" id="licenseKey"></div>
+        </div>
+        
+        <a href="index.html" class="back-link">← Volver al inicio</a>
+    </div>
+
+    <script>
+        document.getElementById('licenseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nombre = document.getElementById('nombre').value;
+            const email = document.getElementById('email').value;
+            const tipo = document.getElementById('tipo').value;
+            
+            // Generar ID único
+            const idUnico = Math.random().toString(36).substring(2, 10).toUpperCase();
+            
+            // Generar hash del email
+            const emailHash = btoa(email).substring(0, 8).toUpperCase();
+            
+            // Generar licencia
+            const prefijo = tipo === 'trial' ? 'TRIAL' : 'FULL';
+            const licencia = `${prefijo}-${idUnico}-${emailHash}`;
+            
+            // Calcular fecha de expiración
+            const fechaExp = new Date();
+            fechaExp.setDate(fechaExp.getDate() + (tipo === 'trial' ? 15 : 365));
+            
+            // Mostrar resultados
+            document.getElementById('clientName').textContent = nombre;
+            document.getElementById('clientEmail').textContent = email;
+            document.getElementById('licenseType').textContent = tipo === 'trial' ? 'Trial (15 días)' : 'Full (1 año)';
+            document.getElementById('expiryDate').textContent = fechaExp.toLocaleDateString();
+            document.getElementById('licenseKey').textContent = licencia;
+            
+            // Mostrar el resultado con animación
+            const result = document.getElementById('result');
+            result.classList.add('show');
+            
+            // Scroll al resultado
+            result.scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html> 

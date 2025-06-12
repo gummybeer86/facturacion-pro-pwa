@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Verificar Licencia - ChapaMarket</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 { 
+            color: #2c3e50; 
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        .input-group {
+            margin: 20px 0;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            font-family: monospace;
+            letter-spacing: 1px;
+        }
+        input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52,152,219,0.2);
+        }
+        .verify-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .verify-btn:hover { 
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52,152,219,0.3);
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: left;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        .result.show {
+            display: block;
+        }
+        .valid {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .invalid {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .result h3 {
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .result p {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        .features-list {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+        .features-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        .features-list li:last-child {
+            border-bottom: none;
+        }
+        .support-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Verificar Licencia ChapaMarket</h1>
+        
+        <div class="input-group">
+            <label for="licenseKey">Clave de Licencia:</label>
+            <input type="text" id="licenseKey" placeholder="Ejemplo: TRIAL-ABC12345-DEF67890" maxlength="50">
+        </div>
+        
+        <button onclick="verificarLicencia()" class="verify-btn">VERIFICAR LICENCIA</button>
+        
+        <div id="resultado" class="result"></div>
+        
+        <a href="index.html" class="back-link">← Volver al inicio</a>
+    </div>
+
+    <script>
+        function verificarLicencia() {
+            const clave = document.getElementById('licenseKey').value.trim().toUpperCase();
+            const resultado = document.getElementById('resultado');
+            
+            if (!clave) {
+                resultado.innerHTML = `
+                    <div class="result invalid show">
+                        <h3>✗ Error de Validación</h3>
+                        <p>Por favor ingresa una clave de licencia.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Validación del formato
+            if (clave.startsWith('TRIAL-')) {
+                resultado.innerHTML = `
+                    <div class="result valid show">
+                        <h3>✓ LICENCIA DE PRUEBA VÁLIDA</h3>
+                        <p><strong>Tipo:</strong> Versión de prueba (15 días)</p>
+                        <p><strong>Estado:</strong> Activa</p>
+                        <p><strong>Funciones disponibles:</strong></p>
+                        <ul class="features-list">
+                            <li>✓ Emisión de CFDI 4.0 (hasta 10 facturas)</li>
+                            <li>✓ Gestión básica de clientes</li>
+                            <li>✓ Reportes simples</li>
+                            <li>✓ Soporte técnico básico</li>
+                        </ul>
+                        <div class="support-info">
+                            Para actualizar a versión completa, contacta a soporte:<br>
+                            WhatsApp: 773-108-6826 o 763-109-3925
+                        </div>
+                    </div>
+                `;
+            } else if (clave.startsWith('FULL-')) {
+                resultado.innerHTML = `
+                    <div class="result valid show">
+                        <h3>✓ LICENCIA COMPLETA VÁLIDA</h3>
+                        <p><strong>Tipo:</strong> Versión completa (1 año)</p>
+                        <p><strong>Estado:</strong> Activa</p>
+                        <p><strong>Funciones disponibles:</strong></p>
+                        <ul class="features-list">
+                            <li>✓ Emisión ilimitada de CFDI 4.0</li>
+                            <li>✓ Gestión avanzada de clientes</li>
+                            <li>✓ Reportes financieros detallados</li>
+                            <li>✓ Integración con sistemas externos</li>
+                            <li>✓ Soporte técnico premium 24/7</li>
+                            <li>✓ Actualizaciones gratuitas</li>
+                        </ul>
+                        <div class="support-info">
+                            Soporte técnico disponible:<br>
+                            WhatsApp: 773-108-6826 o 763-109-3925
+                        </div>
+                    </div>
+                `;
+            } else {
+                resultado.innerHTML = `
+                    <div class="result invalid show">
+                        <h3>✗ LICENCIA INVÁLIDA</h3>
+                        <p>La clave ingresada no es válida o ha expirado.</p>
+                        <div class="support-info">
+                            Para obtener una licencia válida, contacta a soporte:<br>
+                            WhatsApp: 773-108-6826 o 763-109-3925
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Scroll al resultado
+            resultado.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html> 

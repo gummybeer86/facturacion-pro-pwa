@@ -1,0 +1,2914 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHAPAMARKET Key Manager Pro</title>
+    <style>
+        :root {
+            --primary: #7b2cbf;
+            --primary-dark: #5a189a;
+            --secondary: #0f172a;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-container {
+            display: flex;
+            flex: 1;
+        }
+
+        /* Header */
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+
+        .header-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
+        }
+
+        .user-info:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: white;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-name {
+            font-size: 0.875rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: var(--secondary);
+            color: white;
+            padding: 1rem 0;
+            overflow-y: auto;
+            transition: width 0.3s;
+            flex-shrink: 0;
+        }
+
+        .sidebar.collapsed {
+            width: 60px;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            width: 100%;
+            text-align: right;
+            padding-right: 1.5rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: var(--primary);
+        }
+
+        .nav-icon {
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+            width: 1.5rem;
+            text-align: center;
+        }
+
+        .sidebar.collapsed .nav-text {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-link {
+            padding: 0.75rem;
+            justify-content: center;
+        }
+
+        .sidebar.collapsed .nav-icon {
+            margin-right: 0;
+        }
+
+        .sidebar.collapsed .sidebar-toggle {
+            padding-right: 0.5rem;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--secondary);
+        }
+
+        /* Cards */
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            background-color: #f8fafc;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .stat-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .stat-icon.purple {
+            background-color: rgba(123, 44, 191, 0.1);
+            color: var(--primary);
+        }
+
+        .stat-icon.green {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .stat-icon.orange {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .stat-icon.red {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        /* Forms */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--secondary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.625rem 0.75rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: var(--dark);
+            background-color: white;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(123, 44, 191, 0.25);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            font-weight: 500;
+            text-align: center;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 0.625rem 1rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            border-radius: 0.375rem;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            color: white;
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .btn-success {
+            color: white;
+            background-color: var(--success);
+            border-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background-color: #0da271;
+            border-color: #0da271;
+        }
+
+        .btn-danger {
+            color: white;
+            background-color: var(--danger);
+            border-color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+            border-color: #dc2626;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            vertical-align: top;
+            border-top: 1px solid var(--border);
+            text-align: left;
+        }
+
+        .table thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid var(--border);
+            background-color: #f8fafc;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(241, 245, 249, 0.5);
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+            color: var(--gray);
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: var(--primary);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: 0.375rem;
+        }
+
+        .alert-success {
+            color: #0f5132;
+            background-color: #d1e7dd;
+            border-color: #badbcc;
+        }
+
+        .alert-danger {
+            color: #842029;
+            background-color: #f8d7da;
+            border-color: #f5c2c7;
+        }
+
+        .alert-warning {
+            color: #664d03;
+            background-color: #fff3cd;
+            border-color: #ffecb5;
+        }
+
+        .alert-info {
+            color: #055160;
+            background-color: #cff4fc;
+            border-color: #b6effb;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.25rem;
+        }
+
+        .badge-success {
+            color: white;
+            background-color: var(--success);
+        }
+
+        .badge-danger {
+            color: white;
+            background-color: var(--danger);
+        }
+
+        .badge-warning {
+            color: var(--dark);
+            background-color: var(--warning);
+        }
+
+        .badge-info {
+            color: white;
+            background-color: var(--info);
+        }
+
+        .badge-primary {
+            color: white;
+            background-color: var(--primary);
+        }
+
+        /* Modal */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal-backdrop.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(-20px);
+            transition: transform 0.3s;
+        }
+
+        .modal-backdrop.show .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        /* License Preview */
+        .license-preview {
+            background-color: white;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .license-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .license-company h2 {
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .license-company p {
+            margin: 0.25rem 0;
+            color: var(--gray);
+        }
+
+        .license-details {
+            text-align: right;
+        }
+
+        .license-details h1 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .license-details p {
+            margin: 0.25rem 0;
+        }
+
+        .license-client {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-radius: 0.375rem;
+        }
+
+        .license-client h3 {
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .license-key {
+            font-family: monospace;
+            font-size: 1.25rem;
+            padding: 1rem;
+            background-color: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            text-align: center;
+            margin: 1.5rem 0;
+            letter-spacing: 2px;
+        }
+
+        .license-footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--gray);
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                max-height: 300px;
+            }
+
+            .sidebar.collapsed {
+                max-height: 60px;
+                overflow: hidden;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Utilities */
+        .d-flex {
+            display: flex;
+        }
+
+        .align-items-center {
+            align-items: center;
+        }
+
+        .justify-content-between {
+            justify-content: space-between;
+        }
+
+        .mb-1 {
+            margin-bottom: 0.25rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1.5rem;
+        }
+
+        .mt-2 {
+            margin-top: 0.5rem;
+        }
+
+        .mt-3 {
+            margin-top: 1rem;
+        }
+
+        .mt-4 {
+            margin-top: 1.5rem;
+        }
+
+        .ml-2 {
+            margin-left: 0.5rem;
+        }
+
+        .mr-2 {
+            margin-right: 0.5rem;
+        }
+
+        .p-2 {
+            padding: 0.5rem;
+        }
+
+        .p-3 {
+            padding: 1rem;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-success {
+            color: var(--success);
+        }
+
+        .text-danger {
+            color: var(--danger);
+        }
+
+        .text-warning {
+            color: var(--warning);
+        }
+
+        .text-primary {
+            color: var(--primary);
+        }
+
+        .text-muted {
+            color: var(--gray);
+        }
+
+        .w-100 {
+            width: 100%;
+        }
+
+        .d-none {
+            display: none;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 120px;
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.75rem;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.625rem 0.75rem;
+            font-size: 0.875rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem 0 0 0.375rem;
+        }
+
+        .search-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 1rem;
+            border-radius: 0 0.375rem 0.375rem 0;
+            cursor: pointer;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .page-item {
+            margin: 0 0.25rem;
+        }
+
+        .page-link {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .page-link:hover {
+            background-color: #f1f5f9;
+        }
+
+        .page-item.active .page-link {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle {
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            z-index: 1000;
+            display: none;
+            min-width: 10rem;
+            padding: 0.5rem 0;
+            margin: 0.125rem 0 0;
+            font-size: 0.875rem;
+            color: var(--dark);
+            text-align: left;
+            list-style: none;
+            background-color: white;
+            background-clip: padding-box;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            box-shadow: var(--shadow);
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 0.5rem 1.5rem;
+            clear: both;
+            font-weight: 400;
+            color: var(--dark);
+            text-align: inherit;
+            white-space: nowrap;
+            background-color: transparent;
+            border: 0;
+            text-decoration: none;
+        }
+
+        .dropdown-item:hover {
+            color: var(--dark);
+            background-color: #f1f5f9;
+        }
+
+        .dropdown-divider {
+            height: 0;
+            margin: 0.5rem 0;
+            overflow: hidden;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Checkbox and Radio */
+        .form-check {
+            display: block;
+            min-height: 1.5rem;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-check-input {
+            width: 1rem;
+            height: 1rem;
+            margin-top: 0.25rem;
+            margin-left: -1.5rem;
+            vertical-align: top;
+        }
+
+        .form-check-label {
+            margin-bottom: 0;
+        }
+
+        /* Loader Overlay */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .loader-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background-color: white;
+            }
+
+            .header,
+            .sidebar,
+            .card-header,
+            .card-footer,
+            .btn,
+            .fab,
+            .no-print {
+                display: none !important;
+            }
+
+            .card {
+                box-shadow: none;
+                border: none;
+            }
+
+            .card-body {
+                padding: 0;
+            }
+
+            .license-preview {
+                border: none;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="header-logo">🔑</div>
+            <div class="header-title">CHAPAMARKET Key Manager Pro</div>
+        </div>
+        <div class="header-right">
+            <div class="user-info dropdown-toggle" onclick="toggleDropdown('userDropdown')">
+                <div class="user-avatar">CS</div>
+                <div class="user-name">César Sánchez</div>
+            </div>
+            <div class="dropdown-menu" id="userDropdown">
+                <a href="#" class="dropdown-item" onclick="showTab('perfil')">Mi Perfil</a>
+                <a href="#" class="dropdown-item" onclick="showTab('configuracion')">Configuración</a>
+                <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item">Cerrar Sesión</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">
+                <span id="sidebarToggleIcon">◀</span>
+            </button>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" onclick="showTab('dashboard')">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showTab('licencias')">
+                        <span class="nav-icon">🔑</span>
+                        <span class="nav-text">Licencias</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showTab('clientes')">
+                        <span class="nav-icon">👥</span>
+                        <span class="nav-text">Clientes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showTab('productos')">
+                        <span class="nav-icon">📦</span>
+                        <span class="nav-text">Productos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showTab('validador')">
+                        <span class="nav-icon">✅</span>
+                        <span class="nav-text">Validador</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showTab('reportes')">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-text">Reportes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showTab('configuracion')">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-text">Configuración</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showTab('ayuda')">
+                        <span class="nav-icon">❓</span>
+                        <span class="nav-text">Ayuda</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Dashboard -->
+            <div id="dashboard" class="tab-content active">
+                <h1 class="page-title">Dashboard</h1>
+
+                <div class="alert alert-info">
+                    <strong>¡Bienvenido a CHAPAMARKET Key Manager Pro!</strong> Sistema completo para gestión de licencias de software.
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon purple">🔑</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="totalLicencias">0</div>
+                            <div class="stat-label">Licencias Generadas</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">✅</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="licenciasActivas">0</div>
+                            <div class="stat-label">Licencias Activas</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">👥</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="totalClientes">0</div>
+                            <div class="stat-label">Clientes Registrados</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon red">⚠️</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="licenciasExpiradas">0</div>
+                            <div class="stat-label">Licencias Expiradas</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Últimas Licencias</h2>
+                        <button class="btn btn-primary btn-sm" onclick="showTab('licencias')">Ver Todas</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Clave</th>
+                                        <th>Cliente</th>
+                                        <th>Producto</th>
+                                        <th>Tipo</th>
+                                        <th>Fecha Exp.</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ultimasLicencias">
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted">No hay licencias registradas</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Acciones Rápidas</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex" style="gap: 1rem; flex-wrap: wrap;">
+                            <button class="btn btn-primary" onclick="showTab('nueva-licencia')">
+                                <span style="font-size: 1.5rem; margin-right: 0.5rem;">🔑</span> Nueva Licencia
+                            </button>
+                            <button class="btn btn-primary" onclick="showTab('nuevo-cliente')">
+                                <span style="font-size: 1.5rem; margin-right: 0.5rem;">👤</span> Nuevo Cliente
+                            </button>
+                            <button class="btn btn-primary" onclick="showTab('nuevo-producto')">
+                                <span style="font-size: 1.5rem; margin-right: 0.5rem;">📦</span> Nuevo Producto
+                            </button>
+                            <button class="btn btn-primary" onclick="showTab('validador')">
+                                <span style="font-size: 1.5rem; margin-right: 0.5rem;">✅</span> Validar Licencia
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Licencias -->
+            <div id="licencias" class="tab-content">
+                <h1 class="page-title">Gestión de Licencias</h1>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="search-bar">
+                        <input type="text" class="search-input" placeholder="Buscar licencias...">
+                        <button class="search-btn">🔍</button>
+                    </div>
+                    <button class="btn btn-primary" onclick="showTab('nueva-licencia')">+ Nueva Licencia</button>
+                </div>
+
+                <div class="tabs">
+                    <div class="tab active" onclick="showLicenciaTab('todas')">Todas</div>
+                    <div class="tab" onclick="showLicenciaTab('activas')">Activas</div>
+                    <div class="tab" onclick="showLicenciaTab('expiradas')">Expiradas</div>
+                    <div class="tab" onclick="showLicenciaTab('revocadas')">Revocadas</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Clave</th>
+                                        <th>Cliente</th>
+                                        <th>Producto</th>
+                                        <th>Tipo</th>
+                                        <th>Fecha Emisión</th>
+                                        <th>Fecha Expiración</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaLicencias">
+                                    <tr>
+                                        <td colspan="8" class="text-center text-muted">No hay licencias registradas</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="pagination">
+                            <div class="page-item">
+                                <a href="#" class="page-link">«</a>
+                            </div>
+                            <div class="page-item active">
+                                <a href="#" class="page-link">1</a>
+                            </div>
+                            <div class="page-item">
+                                <a href="#" class="page-link">2</a>
+                            </div>
+                            <div class="page-item">
+                                <a href="#" class="page-link">3</a>
+                            </div>
+                            <div class="page-item">
+                                <a href="#" class="page-link">»</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nueva Licencia -->
+            <div id="nueva-licencia" class="tab-content">
+                <h1 class="page-title">Nueva Licencia</h1>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Datos de la Licencia</h2>
+                    </div>
+                    <div class="card-body">
+                        <form id="licenciaForm">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="clienteSelect">Cliente</label>
+                                    <select class="form-control" id="clienteSelect" required>
+                                        <option value="">Seleccionar cliente...</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="productoSelect">Producto</label>
+                                    <select class="form-control" id="productoSelect" required>
+                                        <option value="">Seleccionar producto...</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="tipoLicencia">Tipo de Licencia</label>
+                                    <select class="form-control" id="tipoLicencia" required onchange="actualizarDuracion()">
+                                        <option value="">Seleccionar...</option>
+                                        <option value="trial">Prueba (7 días)</option>
+                                        <option value="mensual">Mensual (30 días)</option>
+                                        <option value="anual">Anual (365 días)</option>
+                                        <option value="lifetime">Vitalicia</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="fechaEmision">Fecha de Emisión</label>
+                                    <input type="date" class="form-control" id="fechaEmision" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="fechaExpiracion">Fecha de Expiración</label>
+                                    <input type="date" class="form-control" id="fechaExpiracion" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="caracteristicasLicencia">Características</label>
+                                <div class="form-grid">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="caracteristicaCompleta">
+                                        <label class="form-check-label" for="caracteristicaCompleta">
+                                            Funcionalidad completa
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="caracteristicaActualizaciones">
+                                        <label class="form-check-label" for="caracteristicaActualizaciones">
+                                            Incluye actualizaciones
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="caracteristicaSoporte">
+                                        <label class="form-check-label" for="caracteristicaSoporte">
+                                            Incluye soporte técnico
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="caracteristicaMultiusuario">
+                                        <label class="form-check-label" for="caracteristicaMultiusuario">
+                                            Licencia multiusuario
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="notasLicencia">Notas</label>
+                                <textarea class="form-control" id="notasLicencia" rows="3" placeholder="Notas adicionales sobre la licencia..."></textarea>
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-between">
+                                    <button type="button" class="btn btn-danger" onclick="showTab('licencias')">Cancelar</button>
+                                    <div>
+                                        <button type="button" class="btn btn-primary mr-2" onclick="previsualizarLicencia()">Vista Previa</button>
+                                        <button type="submit" class="btn btn-success">Generar Licencia</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clientes -->
+            <div id="clientes" class="tab-content">
+                <h1 class="page-title">Gestión de Clientes</h1>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="search-bar">
+                        <input type="text" class="search-input" placeholder="Buscar clientes...">
+                        <button class="search-btn">🔍</button>
+                    </div>
+                    <button class="btn btn-primary" onclick="showTab('nuevo-cliente')">+ Nuevo Cliente</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Email</th>
+                                        <th>Teléfono</th>
+                                        <th>Empresa</th>
+                                        <th>Licencias</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaClientes">
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">No hay clientes registrados</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="pagination">
+                            <div class="page-item">
+                                <a href="#" class="page-link">«</a>
+                            </div>
+                            <div class="page-item active">
+                                <a href="#" class="page-link">1</a>
+                            </div>
+                            <div class="page-item">
+                                <a href="#" class="page-link">2</a>
+                            </div>
+                            <div class="page-item">
+                                <a href="#" class="page-link">3</a>
+                            </div>
+                            <div class="page-item">
+                                <a href="#" class="page-link">»</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nuevo Cliente -->
+            <div id="nuevo-cliente" class="tab-content">
+                <h1 class="page-title">Nuevo Cliente</h1>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Datos del Cliente</h2>
+                    </div>
+                    <div class="card-body">
+                        <form id="clienteForm">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="clienteNombre">Nombre Completo</label>
+                                    <input type="text" class="form-control" id="clienteNombre" placeholder="Nombre completo del cliente" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="clienteEmail">Email</label>
+                                    <input type="email" class="form-control" id="clienteEmail" placeholder="ejemplo@dominio.com" required>
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="clienteTelefono">Teléfono</label>
+                                    <input type="tel" class="form-control" id="clienteTelefono" placeholder="Ej: 5512345678">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="clienteEmpresa">Empresa</label>
+                                    <input type="text" class="form-control" id="clienteEmpresa" placeholder="Nombre de la empresa">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="clienteDireccion">Dirección</label>
+                                <textarea class="form-control" id="clienteDireccion" rows="3" placeholder="Dirección completa"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="clienteNotas">Notas</label>
+                                <textarea class="form-control" id="clienteNotas" rows="3" placeholder="Notas adicionales sobre el cliente..."></textarea>
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-between">
+                                    <button type="button" class="btn btn-danger" onclick="showTab('clientes')">Cancelar</button>
+                                    <button type="submit" class="btn btn-success">Guardar Cliente</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Productos -->
+            <div id="productos" class="tab-content">
+                <h1 class="page-title">Catálogo de Productos</h1>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <div class="search-bar">
+                        <input type="text" class="search-input" placeholder="Buscar productos...">
+                        <button class="search-btn">🔍</button>
+                    </div>
+                    <button class="btn btn-primary" onclick="showTab('nuevo-producto')">+ Nuevo Producto</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Versión</th>
+                                        <th>Precio</th>
+                                        <th>Licencias</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaProductos">
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">No hay productos registrados</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="pagination">
+                            <div class="page-item">
+                                <a href="#" class="page-link">«</a>
+                            </div>
+                            <div class="page-item active">
+                                <a href="#" class="page-link">1</a>
+                            </div>
+                            <div class="page-item">
+                                <a href="#" class="page-link">2</a>
+                            </div>
+                            <div class="page-item">
+                                <a href="#" class="page-link">3</a>
+                            </div>
+                            <div class="page-item">
+                                <a href="#" class="page-link">»</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nuevo Producto -->
+            <div id="nuevo-producto" class="tab-content">
+                <h1 class="page-title">Nuevo Producto</h1>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Datos del Producto</h2>
+                    </div>
+                    <div class="card-body">
+                        <form id="productoForm">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="productoNombre">Nombre del Producto</label>
+                                    <input type="text" class="form-control" id="productoNombre" placeholder="Nombre del software" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="productoVersion">Versión</label>
+                                    <input type="text" class="form-control" id="productoVersion" placeholder="Ej: 1.0.0" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="productoDescripcion">Descripción</label>
+                                <textarea class="form-control" id="productoDescripcion" rows="3" placeholder="Descripción detallada del producto"></textarea>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="productoPrecioTrial">Precio Trial</label>
+                                    <input type="number" class="form-control" id="productoPrecioTrial" step="0.01" min="0" placeholder="0.00">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="productoPrecioMensual">Precio Mensual</label>
+                                    <input type="number" class="form-control" id="productoPrecioMensual" step="0.01" min="0" placeholder="0.00">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="productoPrecioAnual">Precio Anual</label>
+                                    <input type="number" class="form-control" id="productoPrecioAnual" step="0.01" min="0" placeholder="0.00">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="productoPrecioVitalicio">Precio Vitalicio</label>
+                                    <input type="number" class="form-control" id="productoPrecioVitalicio" step="0.01" min="0" placeholder="0.00">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="productoCaracteristicas">Características</label>
+                                <textarea class="form-control" id="productoCaracteristicas" rows="4" placeholder="Lista de características del producto..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="productoEstado">Estado</label>
+                                <select class="form-control" id="productoEstado" required>
+                                    <option value="activo">Activo</option>
+                                    <option value="inactivo">Inactivo</option>
+                                    <option value="descontinuado">Descontinuado</option>
+                                </select>
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-between">
+                                    <button type="button" class="btn btn-danger" onclick="showTab('productos')">Cancelar</button>
+                                    <button type="submit" class="btn btn-success">Guardar Producto</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Validador -->
+            <div id="validador" class="tab-content">
+                <h1 class="page-title">Validador de Licencias</h1>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Verificar Licencia</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="form-label" for="licenciaValidar">Clave de Licencia</label>
+                            <input type="text" class="form-control" id="licenciaValidar" placeholder="Ingrese la clave de licencia" style="font-family: monospace; font-size: 1.1rem;">
+                        </div>
+
+                        <div class="text-center">
+                            <button class="btn btn-primary" onclick="validarLicencia()">Validar Licencia</button>
+                        </div>
+
+                        <div id="resultadoValidacion" class="mt-4"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Validaciones Recientes</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Clave</th>
+                                        <th>Cliente</th>
+                                        <th>Resultado</th>
+                                        <th>IP</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaValidaciones">
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">No hay validaciones registradas</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reportes -->
+            <div id="reportes" class="tab-content">
+                <h1 class="page-title">Reportes y Estadísticas</h1>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Generar Reportes</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="tipoReporte">Tipo de Reporte</label>
+                                <select class="form-control" id="tipoReporte">
+                                    <option value="">Seleccionar...</option>
+                                    <option value="licencias">Reporte de Licencias</option>
+                                    <option value="clientes">Reporte de Clientes</option>
+                                    <option value="productos">Reporte de Productos</option>
+                                    <option value="validaciones">Reporte de Validaciones</option>
+                                    <option value="ingresos">Reporte de Ingresos</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="fechaInicio">Fecha Inicio</label>
+                                <input type="date" class="form-control" id="fechaInicio">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="fechaFin">Fecha Fin</label>
+                                <input type="date" class="form-control" id="fechaFin">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="formatoReporte">Formato</label>
+                                <select class="form-control" id="formatoReporte">
+                                    <option value="pdf">PDF</option>
+                                    <option value="excel">Excel</option>
+                                    <option value="csv">CSV</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <button class="btn btn-primary" onclick="generarReporte()">Generar Reporte</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Estadísticas del Mes</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon purple">📊</div>
+                                <div class="stat-info">
+                                    <div class="stat-value">0</div>
+                                    <div class="stat-label">Licencias Generadas</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon green">💰</div>
+                                <div class="stat-info">
+                                    <div class="stat-value">$0.00</div>
+                                    <div class="stat-label">Ingresos Totales</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon orange">📈</div>
+                                <div class="stat-info">
+                                    <div class="stat-value">0</div>
+                                    <div class="stat-label">Validaciones</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon red">👥</div>
+                                <div class="stat-info">
+                                    <div class="stat-value">0</div>
+                                    <div class="stat-label">Clientes Nuevos</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración -->
+            <div id="configuracion" class="tab-content">
+                <h1 class="page-title">Configuración del Sistema</h1>
+
+                <div class="tabs">
+                    <div class="tab active" onclick="showConfigTab('general')">General</div>
+                    <div class="tab" onclick="showConfigTab('licencias')">Licencias</div>
+                    <div class="tab" onclick="showConfigTab('notificaciones')">Notificaciones</div>
+                    <div class="tab" onclick="showConfigTab('seguridad')">Seguridad</div>
+                </div>
+
+                <div id="config-general" class="tab-content active">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Configuración General</h2>
+                        </div>
+                        <div class="card-body">
+                            <form id="configGeneralForm">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label" for="empresaNombre">Nombre de la Empresa</label>
+                                        <input type="text" class="form-control" id="empresaNombre" placeholder="Create Studio Digital" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="empresaEmail">Email de Contacto</label>
+                                        <input type="email" class="form-control" id="empresaEmail" placeholder="contacto@empresa.com" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label class="form-label" for="empresaTelefono">Teléfono</label>
+                                        <input type="tel" class="form-control" id="empresaTelefono" placeholder="773-108-6826">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="empresaWeb">Sitio Web</label>
+                                        <input type="url" class="form-control" id="empresaWeb" placeholder="https://createstudiodigital.com">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="empresaDireccion">Dirección</label>
+                                    <textarea class="form-control" id="empresaDireccion" rows="3" placeholder="Dirección completa de la empresa"></textarea>
+                                </div>
+
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-success">Guardar Configuración</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="config-licencias" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Configuración de Licencias</h2>
+                        </div>
+                        <div class="card-body">
+                            <form id="configLicenciasForm">
+                                <div class="form-group">
+                                    <label class="form-label" for="prefijoLicencia">Prefijo de Licencias</label>
+                                    <input type="text" class="form-control" id="prefijoLicencia" placeholder="CSD" maxlength="5">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="longitudClave">Longitud de Clave</label>
+                                    <select class="form-control" id="longitudClave">
+                                        <option value="16">16 caracteres</option>
+                                        <option value="24">24 caracteres</option>
+                                        <option value="32">32 caracteres</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Configuración de Expiración</label>
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label class="form-label" for="diasTrial">Días Trial</label>
+                                            <input type="number" class="form-control" id="diasTrial" value="7" min="1">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label" for="diasMensual">Días Mensual</label>
+                                            <input type="number" class="form-control" id="diasMensual" value="30" min="1">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label" for="diasAnual">Días Anual</label>
+                                            <input type="number" class="form-control" id="diasAnual" value="365" min="1">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="permitirRenovacion">
+                                    <label class="form-check-label" for="permitirRenovacion">
+                                        Permitir renovación automática
+                                    </label>
+                                </div>
+
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-success">Guardar Configuración</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="config-notificaciones" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Configuración de Notificaciones</h2>
+                        </div>
+                        <div class="card-body">
+                            <form id="configNotificacionesForm">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="notificarExpiracion">
+                                    <label class="form-check-label" for="notificarExpiracion">
+                                        Notificar expiración de licencias
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="diasAnticipacion">Días de anticipación</label>
+                                    <input type="number" class="form-control" id="diasAnticipacion" value="7" min="1">
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="notificarValidaciones">
+                                    <label class="form-check-label" for="notificarValidaciones">
+                                        Notificar validaciones de licencias
+                                    </label>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="notificarNuevosClientes">
+                                    <label class="form-check-label" for="notificarNuevosClientes">
+                                        Notificar nuevos clientes
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="emailNotificaciones">Email para notificaciones</label>
+                                    <input type="email" class="form-control" id="emailNotificaciones" placeholder="admin@empresa.com">
+                                </div>
+
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-success">Guardar Configuración</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="config-seguridad" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Configuración de Seguridad</h2>
+                        </div>
+                        <div class="card-body">
+                            <form id="configSeguridadForm">
+                                <div class="form-group">
+                                    <label class="form-label" for="claveEncriptacion">Clave de Encriptación</label>
+                                    <input type="password" class="form-control" id="claveEncriptacion" placeholder="Clave secreta para encriptar licencias">
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="validacionIP">
+                                    <label class="form-check-label" for="validacionIP">
+                                        Validar por dirección IP
+                                    </label>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="validacionHardware">
+                                    <label class="form-check-label" for="validacionHardware">
+                                        Validar por hardware ID
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="intentosMaximos">Intentos máximos de validación</label>
+                                    <input type="number" class="form-control" id="intentosMaximos" value="5" min="1">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="tiempoBloqueo">Tiempo de bloqueo (minutos)</label>
+                                    <input type="number" class="form-control" id="tiempoBloqueo" value="30" min="1">
+                                </div>
+
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-success">Guardar Configuración</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ayuda -->
+            <div id="ayuda" class="tab-content">
+                <h1 class="page-title">Centro de Ayuda</h1>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Preguntas Frecuentes</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="accordion">
+                            <div class="card mb-2">
+                                <div class="card-header" style="cursor: pointer;" onclick="toggleAccordion('faq1')">
+                                    <strong>¿Cómo generar una nueva licencia?</strong>
+                                </div>
+                                <div class="card-body d-none" id="faq1">
+                                    <p>Para generar una nueva licencia:</p>
+                                    <ol>
+                                        <li>Ve a la sección "Licencias" → "Nueva Licencia"</li>
+                                        <li>Selecciona el cliente y producto</li>
+                                        <li>Elige el tipo de licencia</li>
+                                        <li>Configura las fechas</li>
+                                        <li>Haz clic en "Generar Licencia"</li>
+                                    </ol>
+                                </div>
+                            </div>
+
+                            <div class="card mb-2">
+                                <div class="card-header" style="cursor: pointer;" onclick="toggleAccordion('faq2')">
+                                    <strong>¿Cómo validar una licencia?</strong>
+                                </div>
+                                <div class="card-body d-none" id="faq2">
+                                    <p>Para validar una licencia:</p>
+                                    <ol>
+                                        <li>Ve a la sección "Validador"</li>
+                                        <li>Ingresa la clave de licencia</li>
+                                        <li>Haz clic en "Validar Licencia"</li>
+                                        <li>El sistema mostrará el resultado</li>
+                                    </ol>
+                                </div>
+                            </div>
+
+                            <div class="card mb-2">
+                                <div class="card-header" style="cursor: pointer;" onclick="toggleAccordion('faq3')">
+                                    <strong>¿Qué tipos de licencia puedo crear?</strong>
+                                </div>
+                                <div class="card-body d-none" id="faq3">
+                                    <p>Puedes crear los siguientes tipos de licencia:</p>
+                                    <ul>
+                                        <li><strong>Trial:</strong> Licencia de prueba (7 días por defecto)</li>
+                                        <li><strong>Mensual:</strong> Licencia válida por 30 días</li>
+                                        <li><strong>Anual:</strong> Licencia válida por 365 días</li>
+                                        <li><strong>Vitalicia:</strong> Licencia sin fecha de expiración</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="card mb-2">
+                                <div class="card-header" style="cursor: pointer;" onclick="toggleAccordion('faq4')">
+                                    <strong>¿Cómo revocar una licencia?</strong>
+                                </div>
+                                <div class="card-body d-none" id="faq4">
+                                    <p>Para revocar una licencia:</p>
+                                    <ol>
+                                        <li>Ve a la sección "Licencias"</li>
+                                        <li>Busca la licencia que deseas revocar</li>
+                                        <li>Haz clic en "Revocar" en las acciones</li>
+                                        <li>Confirma la acción</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Soporte Técnico</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center">
+                            <h3>Create Studio Digital</h3>
+                            <p><strong>ING. César Sánchez</strong></p>
+                            <div class="mt-3">
+                                <p><strong>WhatsApp:</strong></p>
+                                <p>📱 773-108-6826</p>
+                                <p>📱 763-109-3925</p>
+                            </div>
+                            <div class="mt-3">
+                                <p><strong>Email:</strong></p>
+                                <p>📧 chapmarket@createstudiodigital.com.mx</p>
+                                <p>📧 vercelkash@gmail.com</p>
+                            </div>
+                            <div class="mt-4">
+                                <button class="btn btn-success" onclick="contactarSoporte()">
+                                    💬 Contactar por WhatsApp
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Vista Previa -->
+    <div class="modal-backdrop" id="modalPreview">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Vista Previa de Licencia</h3>
+                <button class="modal-close" onclick="cerrarModal('modalPreview')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="licenciaPreview" class="license-preview">
+                    <!-- Aquí se generará la vista previa -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" onclick="cerrarModal('modalPreview')">Cerrar</button>
+                <button class="btn btn-primary" onclick="imprimirLicencia()">Imprimir</button>
+                <button class="btn btn-success" onclick="descargarLicencia()">Descargar PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loader Overlay -->
+    <div class="loader-overlay" id="loaderOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        // Variables globales
+        let licencias = JSON.parse(localStorage.getItem('keymanager_licencias') || '[]');
+        let clientes = JSON.parse(localStorage.getItem('keymanager_clientes') || '[]');
+        let productos = JSON.parse(localStorage.getItem('keymanager_productos') || '[]');
+        let validaciones = JSON.parse(localStorage.getItem('keymanager_validaciones') || '[]');
+        let configuracion = JSON.parse(localStorage.getItem('keymanager_config') || '{}');
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            inicializarSistema();
+            cargarDatos();
+            actualizarEstadisticas();
+            
+            // Configurar fecha actual
+            document.getElementById('fechaEmision').value = new Date().toISOString().split('T')[0];
+            
+            // Event listeners para formularios
+            document.getElementById('licenciaForm').addEventListener('submit', guardarLicencia);
+            document.getElementById('clienteForm').addEventListener('submit', guardarCliente);
+            document.getElementById('productoForm').addEventListener('submit', guardarProducto);
+            document.getElementById('configGeneralForm').addEventListener('submit', guardarConfigGeneral);
+            document.getElementById('configLicenciasForm').addEventListener('submit', guardarConfigLicencias);
+            document.getElementById('configNotificacionesForm').addEventListener('submit', guardarConfigNotificaciones);
+            document.getElementById('configSeguridadForm').addEventListener('submit', guardarConfigSeguridad);
+        });
+
+        // Funciones de navegación
+        function showTab(tabName) {
+            // Ocultar todas las pestañas
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Mostrar la pestaña seleccionada
+            const targetTab = document.getElementById(tabName);
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
+            
+            // Actualizar navegación
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            const activeLink = document.querySelector(`[onclick="showTab('${tabName}')"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+            
+            // Cargar datos específicos de la pestaña
+            switch(tabName) {
+                case 'dashboard':
+                    actualizarDashboard();
+                    break;
+                case 'licencias':
+                    cargarTablaLicencias();
+                    break;
+                case 'clientes':
+                    cargarTablaClientes();
+                    break;
+                case 'productos':
+                    cargarTablaProductos();
+                    break;
+                case 'nueva-licencia':
+                    cargarSelectClientes();
+                    cargarSelectProductos();
+                    break;
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const icon = document.getElementById('sidebarToggleIcon');
+            
+            sidebar.classList.toggle('collapsed');
+            icon.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
+        }
+
+        function toggleDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            dropdown.classList.toggle('show');
+            
+            // Cerrar otros dropdowns
+            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                if (menu.id !== dropdownId) {
+                    menu.classList.remove('show');
+                }
+            });
+        }
+
+        // Cerrar dropdowns al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    menu.classList.remove('show');
+                });
+            }
+        });
+
+        // Funciones de inicialización
+        function inicializarSistema() {
+            // Datos de ejemplo si no existen
+            if (clientes.length === 0) {
+                clientes = [
+                    {
+                        id: 1,
+                        nombre: 'Cliente de Ejemplo',
+                        email: 'cliente@ejemplo.com',
+                        telefono: '5512345678',
+                        empresa: 'Empresa Ejemplo',
+                        direccion: 'Dirección de ejemplo',
+                        notas: 'Cliente de prueba',
+                        fechaCreacion: new Date().toISOString()
+                    }
+                ];
+                localStorage.setItem('keymanager_clientes', JSON.stringify(clientes));
+            }
+            
+            if (productos.length === 0) {
+                productos = [
+                    {
+                        id: 1,
+                        nombre: 'CHAPAMARKET Facturas',
+                        version: '1.0.0',
+                        descripcion: 'Sistema de facturación electrónica CFDI 4.0',
+                        precioTrial: 0,
+                        precioMensual: 500,
+                        precioAnual: 5000,
+                        precioVitalicio: 15000,
+                        caracteristicas: 'Facturación CFDI 4.0\nGestión de clientes\nReportes financieros',
+                        estado: 'activo',
+                        fechaCreacion: new Date().toISOString()
+                    }
+                ];
+                localStorage.setItem('keymanager_productos', JSON.stringify(productos));
+            }
+        }
+
+        function cargarDatos() {
+            cargarTablaLicencias();
+            cargarTablaClientes();
+            cargarTablaProductos();
+            cargarSelectClientes();
+            cargarSelectProductos();
+        }
+
+        // Funciones de licencias
+        function guardarLicencia(e) {
+            e.preventDefault();
+            
+            mostrarLoader();
+            
+            setTimeout(() => {
+                const cliente = clientes.find(c => c.id == document.getElementById('clienteSelect').value);
+                const producto = productos.find(p => p.id == document.getElementById('productoSelect').value);
+                
+                const nuevaLicencia = {
+                    id: Date.now(),
+                    clave: generarClaveLicencia(),
+                    cliente: cliente,
+                    producto: producto,
+                    tipo: document.getElementById('tipoLicencia').value,
+                    fechaEmision: document.getElementById('fechaEmision').value,
+                    fechaExpiracion: document.getElementById('fechaExpiracion').value,
+                    caracteristicas: {
+                        completa: document.getElementById('caracteristicaCompleta').checked,
+                        actualizaciones: document.getElementById('caracteristicaActualizaciones').checked,
+                        soporte: document.getElementById('caracteristicaSoporte').checked,
+                        multiusuario: document.getElementById('caracteristicaMultiusuario').checked
+                    },
+                    notas: document.getElementById('notasLicencia').value,
+                    estado: 'activa',
+                    fechaCreacion: new Date().toISOString()
+                };
+                
+                licencias.unshift(nuevaLicencia);
+                localStorage.setItem('keymanager_licencias', JSON.stringify(licencias));
+                
+                ocultarLoader();
+                mostrarAlerta('Licencia generada exitosamente', 'success');
+                
+                // Limpiar formulario
+                document.getElementById('licenciaForm').reset();
+                
+                // Volver a licencias
+                showTab('licencias');
+                actualizarEstadisticas();
+            }, 2000);
+        }
+
+        function generarClaveLicencia() {
+            const prefijo = configuracion.licencias?.prefijo || 'CSD';
+            const longitud = configuracion.licencias?.longitud || 16;
+            const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let clave = prefijo + '-';
+            
+            for (let i = 0; i < longitud; i++) {
+                if (i > 0 && i % 4 === 0) {
+                    clave += '-';
+                }
+                clave += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+            }
+            
+            return clave;
+        }
+
+        function actualizarDuracion() {
+            const tipo = document.getElementById('tipoLicencia').value;
+            const fechaEmision = new Date(document.getElementById('fechaEmision').value);
+            let fechaExpiracion = new Date(fechaEmision);
+            
+            switch(tipo) {
+                case 'trial':
+                    fechaExpiracion.setDate(fechaExpiracion.getDate() + (configuracion.licencias?.diasTrial || 7));
+                    break;
+                case 'mensual':
+                    fechaExpiracion.setDate(fechaExpiracion.getDate() + (configuracion.licencias?.diasMensual || 30));
+                    break;
+                case 'anual':
+                    fechaExpiracion.setDate(fechaExpiracion.getDate() + (configuracion.licencias?.diasAnual || 365));
+                    break;
+                case 'lifetime':
+                    fechaExpiracion.setFullYear(fechaExpiracion.getFullYear() + 100);
+                    break;
+            }
+            
+            document.getElementById('fechaExpiracion').value = fechaExpiracion.toISOString().split('T')[0];
+        }
+
+        function previsualizarLicencia() {
+            const cliente = clientes.find(c => c.id == document.getElementById('clienteSelect').value);
+            const producto = productos.find(p => p.id == document.getElementById('productoSelect').value);
+            
+            if (!cliente || !producto) {
+                mostrarAlerta('Complete todos los datos de la licencia', 'warning');
+                return;
+            }
+            
+            const previewHTML = generarPreviewLicencia(cliente, producto);
+            document.getElementById('licenciaPreview').innerHTML = previewHTML;
+            mostrarModal('modalPreview');
+        }
+
+        function generarPreviewLicencia(cliente, producto) {
+            const tipo = document.getElementById('tipoLicencia').value;
+            const fechaEmision = document.getElementById('fechaEmision').value;
+            const fechaExpiracion = document.getElementById('fechaExpiracion').value;
+            const clave = generarClaveLicencia();
+            
+            return `
+                <div class="license-header">
+                    <div class="license-company">
+                        <h2>CHAPAMARKET</h2>
+                        <p>Create Studio Digital</p>
+                        <p>ING. César Sánchez</p>
+                        <p>Key Manager Pro</p>
+                    </div>
+                    <div class="license-details">
+                        <h1>LICENCIA DE SOFTWARE</h1>
+                        <p><strong>Tipo:</strong> ${tipo.toUpperCase()}</p>
+                        <p><strong>Fecha:</strong> ${fechaEmision}</p>
+                    </div>
+                </div>
+                
+                <div class="license-client">
+                    <h3>Licenciado a:</h3>
+                    <p><strong>${cliente.nombre}</strong></p>
+                    <p>Email: ${cliente.email}</p>
+                    <p>Empresa: ${cliente.empresa}</p>
+                </div>
+                
+                <div class="license-client">
+                    <h3>Producto:</h3>
+                    <p><strong>${producto.nombre} v${producto.version}</strong></p>
+                    <p>${producto.descripcion}</p>
+                </div>
+                
+                <div class="license-key">
+                    ${clave}
+                </div>
+                
+                <div class="license-client">
+                    <h3>Detalles de la Licencia:</h3>
+                    <p><strong>Fecha de Emisión:</strong> ${fechaEmision}</p>
+                    <p><strong>Fecha de Expiración:</strong> ${fechaExpiracion}</p>
+                    <p><strong>Estado:</strong> Activa</p>
+                </div>
+                
+                <div class="license-footer">
+                    <p>Esta licencia es válida únicamente para el usuario especificado</p>
+                    <p>Create Studio Digital - WhatsApp: 773-108-6826 o 763-109-3925</p>
+                </div>
+            `;
+        }
+
+        // Funciones de clientes
+        function guardarCliente(e) {
+            e.preventDefault();
+            
+            const nuevoCliente = {
+                id: Date.now(),
+                nombre: document.getElementById('clienteNombre').value,
+                email: document.getElementById('clienteEmail').value,
+                telefono: document.getElementById('clienteTelefono').value,
+                empresa: document.getElementById('clienteEmpresa').value,
+                direccion: document.getElementById('clienteDireccion').value,
+                notas: document.getElementById('clienteNotas').value,
+                fechaCreacion: new Date().toISOString()
+            };
+            
+            clientes.push(nuevoCliente);
+            localStorage.setItem('keymanager_clientes', JSON.stringify(clientes));
+            
+            mostrarAlerta('Cliente guardado exitosamente', 'success');
+            document.getElementById('clienteForm').reset();
+            showTab('clientes');
+            cargarTablaClientes();
+            cargarSelectClientes();
+        }
+
+        function cargarTablaClientes() {
+            const tbody = document.getElementById('tablaClientes');
+            
+            if (clientes.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No hay clientes registrados</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = clientes.map(cliente => {
+                const licenciasCliente = licencias.filter(l => l.cliente.id === cliente.id).length;
+                
+                return `
+                    <tr>
+                        <td>${cliente.nombre}</td>
+                        <td>${cliente.email}</td>
+                        <td>${cliente.telefono}</td>
+                        <td>${cliente.empresa}</td>
+                        <td><span class="badge badge-primary">${licenciasCliente}</span></td>
+                        <td class="table-actions">
+                            <button class="btn btn-primary btn-sm" onclick="editarCliente(${cliente.id})">Editar</button>
+                            <button class="btn btn-danger btn-sm" onclick="eliminarCliente(${cliente.id})">Eliminar</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function cargarSelectClientes() {
+            const select = document.getElementById('clienteSelect');
+            if (!select) return;
+            
+            select.innerHTML = '<option value="">Seleccionar cliente...</option>' +
+                clientes.map(cliente => `<option value="${cliente.id}">${cliente.nombre} (${cliente.empresa})</option>`).join('');
+        }
+
+        // Funciones de productos
+        function guardarProducto(e) {
+            e.preventDefault();
+            
+            const nuevoProducto = {
+                id: Date.now(),
+                nombre: document.getElementById('productoNombre').value,
+                version: document.getElementById('productoVersion').value,
+                descripcion: document.getElementById('productoDescripcion').value,
+                precioTrial: parseFloat(document.getElementById('productoPrecioTrial').value) || 0,
+                precioMensual: parseFloat(document.getElementById('productoPrecioMensual').value) || 0,
+                precioAnual: parseFloat(document.getElementById('productoPrecioAnual').value) || 0,
+                precioVitalicio: parseFloat(document.getElementById('productoPrecioVitalicio').value) || 0,
+                caracteristicas: document.getElementById('productoCaracteristicas').value,
+                estado: document.getElementById('productoEstado').value,
+                fechaCreacion: new Date().toISOString()
+            };
+            
+            productos.push(nuevoProducto);
+            localStorage.setItem('keymanager_productos', JSON.stringify(productos));
+            
+            mostrarAlerta('Producto guardado exitosamente', 'success');
+            document.getElementById('productoForm').reset();
+            showTab('productos');
+            cargarTablaProductos();
+            cargarSelectProductos();
+        }
+
+        function cargarTablaProductos() {
+            const tbody = document.getElementById('tablaProductos');
+            
+            if (productos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No hay productos registrados</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = productos.map(producto => {
+                const licenciasProducto = licencias.filter(l => l.producto.id === producto.id).length;
+                
+                return `
+                    <tr>
+                        <td>${producto.nombre}</td>
+                        <td>${producto.version}</td>
+                        <td>$${formatearMoneda(producto.precioAnual)}</td>
+                        <td><span class="badge badge-primary">${licenciasProducto}</span></td>
+                        <td><span class="badge badge-${producto.estado === 'activo' ? 'success' : 'danger'}">${producto.estado}</span></td>
+                        <td class="table-actions">
+                            <button class="btn btn-primary btn-sm" onclick="editarProducto(${producto.id})">Editar</button>
+                            <button class="btn btn-danger btn-sm" onclick="eliminarProducto(${producto.id})">Eliminar</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function cargarSelectProductos() {
+            const select = document.getElementById('productoSelect');
+            if (!select) return;
+            
+            select.innerHTML = '<option value="">Seleccionar producto...</option>' +
+                productos.filter(p => p.estado === 'activo').map(producto => `<option value="${producto.id}">${producto.nombre} v${producto.version}</option>`).join('');
+        }
+
+        // Funciones de validación
+        function validarLicencia() {
+            const clave = document.getElementById('licenciaValidar').value.trim().toUpperCase();
+            
+            if (!clave) {
+                mostrarAlerta('Ingrese una clave de licencia', 'warning');
+                return;
+            }
+            
+            mostrarLoader();
+            
+            setTimeout(() => {
+                const licencia = licencias.find(l => l.clave === clave);
+                const resultadoDiv = document.getElementById('resultadoValidacion');
+                
+                // Registrar validación
+                const validacion = {
+                    id: Date.now(),
+                    fecha: new Date().toISOString(),
+                    clave: clave,
+                    resultado: licencia ? 'válida' : 'inválida',
+                    cliente: licencia ? licencia.cliente.nombre : 'N/A',
+                    ip: '192.168.1.1' // Simulado
+                };
+                
+                validaciones.unshift(validacion);
+                localStorage.setItem('keymanager_validaciones', JSON.stringify(validaciones));
+                
+                if (licencia) {
+                    const fechaExpiracion = new Date(licencia.fechaExpiracion);
+                    const hoy = new Date();
+                    const expirada = fechaExpiracion < hoy;
+                    
+                    resultadoDiv.innerHTML = `
+                        <div class="alert alert-${expirada ? 'warning' : 'success'}">
+                            <h4><strong>✓ LICENCIA ${expirada ? 'EXPIRADA' : 'VÁLIDA'}</strong></h4>
+                            <p><strong>Cliente:</strong> ${licencia.cliente.nombre}</p>
+                            <p><strong>Producto:</strong> ${licencia.producto.nombre} v${licencia.producto.version}</p>
+                            <p><strong>Tipo:</strong> ${licencia.tipo.toUpperCase()}</p>
+                            <p><strong>Fecha de Expiración:</strong> ${licencia.fechaExpiracion}</p>
+                            <p><strong>Estado:</strong> ${expirada ? 'Expirada' : 'Activa'}</p>
+                        </div>
+                    `;
+                } else {
+                    resultadoDiv.innerHTML = `
+                        <div class="alert alert-danger">
+                            <h4><strong>✗ LICENCIA INVÁLIDA</strong></h4>
+                            <p>La clave ingresada no es válida o no existe en el sistema.</p>
+                            <p>Contacta a soporte: 773-108-6826</p>
+                        </div>
+                    `;
+                }
+                
+                cargarTablaValidaciones();
+                ocultarLoader();
+            }, 1500);
+        }
+
+        function cargarTablaValidaciones() {
+            const tbody = document.getElementById('tablaValidaciones');
+            
+            if (validaciones.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No hay validaciones registradas</td></tr>';
+                return;
+            }
+            
+            const validacionesRecientes = validaciones.slice(0, 10);
+            
+            tbody.innerHTML = validacionesRecientes.map(validacion => `
+                <tr>
+                    <td>${new Date(validacion.fecha).toLocaleString()}</td>
+                    <td style="font-family: monospace;">${validacion.clave}</td>
+                    <td>${validacion.cliente}</td>
+                    <td><span class="badge badge-${validacion.resultado === 'válida' ? 'success' : 'danger'}">${validacion.resultado}</span></td>
+                    <td>${validacion.ip}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Funciones de configuración
+        function guardarConfigGeneral(e) {
+            e.preventDefault();
+            
+            configuracion.general = {
+                nombre: document.getElementById('empresaNombre').value,
+                email: document.getElementById('empresaEmail').value,
+                telefono: document.getElementById('empresaTelefono').value,
+                web: document.getElementById('empresaWeb').value,
+                direccion: document.getElementById('empresaDireccion').value
+            };
+            
+            localStorage.setItem('keymanager_config', JSON.stringify(configuracion));
+            mostrarAlerta('Configuración general guardada', 'success');
+        }
+
+        function guardarConfigLicencias(e) {
+            e.preventDefault();
+            
+            configuracion.licencias = {
+                prefijo: document.getElementById('prefijoLicencia').value,
+                longitud: parseInt(document.getElementById('longitudClave').value),
+                diasTrial: parseInt(document.getElementById('diasTrial').value),
+                diasMensual: parseInt(document.getElementById('diasMensual').value),
+                diasAnual: parseInt(document.getElementById('diasAnual').value),
+                permitirRenovacion: document.getElementById('permitirRenovacion').checked
+            };
+            
+            localStorage.setItem('keymanager_config', JSON.stringify(configuracion));
+            mostrarAlerta('Configuración de licencias guardada', 'success');
+        }
+
+        function guardarConfigNotificaciones(e) {
+            e.preventDefault();
+            
+            configuracion.notificaciones = {
+                notificarExpiracion: document.getElementById('notificarExpiracion').checked,
+                diasAnticipacion: parseInt(document.getElementById('diasAnticipacion').value),
+                notificarValidaciones: document.getElementById('notificarValidaciones').checked,
+                notificarNuevosClientes: document.getElementById('notificarNuevosClientes').checked,
+                emailNotificaciones: document.getElementById('emailNotificaciones').value
+            };
+            
+            localStorage.setItem('keymanager_config', JSON.stringify(configuracion));
+            mostrarAlerta('Configuración de notificaciones guardada', 'success');
+        }
+
+        function guardarConfigSeguridad(e) {
+            e.preventDefault();
+            
+            configuracion.seguridad = {
+                claveEncriptacion: document.getElementById('claveEncriptacion').value,
+                validacionIP: document.getElementById('validacionIP').checked,
+                validacionHardware: document.getElementById('validacionHardware').checked,
+                intentosMaximos: parseInt(document.getElementById('intentosMaximos').value),
+                tiempoBloqueo: parseInt(document.getElementById('tiempoBloqueo').value)
+            };
+            
+            localStorage.setItem('keymanager_config', JSON.stringify(configuracion));
+            mostrarAlerta('Configuración de seguridad guardada', 'success');
+        }
+
+        // Funciones de reportes
+        function generarReporte() {
+            const tipo = document.getElementById('tipoReporte').value;
+            const formato = document.getElementById('formatoReporte').value;
+            
+            if (!tipo) {
+                mostrarAlerta('Seleccione un tipo de reporte', 'warning');
+                return;
+            }
+            
+            mostrarLoader();
+            
+            setTimeout(() => {
+                ocultarLoader();
+                mostrarAlerta(`Reporte de ${tipo} generado en formato ${formato.toUpperCase()}`, 'success');
+            }, 2000);
+        }
+
+        // Funciones de utilidad
+        function formatearMoneda(cantidad) {
+            return new Intl.NumberFormat('es-MX', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(cantidad);
+        }
+
+        function mostrarAlerta(mensaje, tipo) {
+            const alertaHTML = `
+                <div class="alert alert-${tipo} fade-in">
+                    ${mensaje}
+                </div>
+            `;
+            
+            const alertaContainer = document.createElement('div');
+            alertaContainer.style.position = 'fixed';
+            alertaContainer.style.top = '20px';
+            alertaContainer.style.right = '20px';
+            alertaContainer.style.zIndex = '9999';
+            alertaContainer.innerHTML = alertaHTML;
+            
+            document.body.appendChild(alertaContainer);
+            
+            setTimeout(() => {
+                alertaContainer.remove();
+            }, 3000);
+        }
+
+        function mostrarModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
+        }
+
+        function cerrarModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        function mostrarLoader() {
+            document.getElementById('loaderOverlay').classList.add('show');
+        }
+
+        function ocultarLoader() {
+            document.getElementById('loaderOverlay').classList.remove('show');
+        }
+
+        function toggleAccordion(id) {
+            const element = document.getElementById(id);
+            element.classList.toggle('d-none');
+        }
+
+        function showLicenciaTab(tab) {
+            document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.tabs .tab[onclick="showLicenciaTab('${tab}')"]`).classList.add('active');
+            cargarTablaLicencias(tab);
+        }
+
+        function showConfigTab(tab) {
+            document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.tabs .tab[onclick="showConfigTab('${tab}')"]`).classList.add('active');
+            
+            document.querySelectorAll('#configuracion .tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(`config-${tab}`).classList.add('active');
+        }
+
+        // Funciones de datos
+        function actualizarDashboard() {
+            cargarUltimasLicencias();
+            actualizarEstadisticas();
+        }
+
+        function cargarUltimasLicencias() {
+            const tbody = document.getElementById('ultimasLicencias');
+            
+            if (licencias.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No hay licencias registradas</td></tr>';
+                return;
+            }
+            
+            const ultimasLicencias = licencias.slice(0, 5);
+            
+            tbody.innerHTML = ultimasLicencias.map(licencia => {
+                const fechaExpiracion = new Date(licencia.fechaExpiracion);
+                const hoy = new Date();
+                const expirada = fechaExpiracion < hoy;
+                
+                return `
+                    <tr>
+                        <td style="font-family: monospace; font-size: 0.8rem;">${licencia.clave}</td>
+                        <td>${licencia.cliente.nombre}</td>
+                        <td>${licencia.producto.nombre}</td>
+                        <td><span class="badge badge-info">${licencia.tipo}</span></td>
+                        <td>${licencia.fechaExpiracion}</td>
+                        <td><span class="badge badge-${expirada ? 'danger' : 'success'}">${expirada ? 'Expirada' : 'Activa'}</span></td>
+                        <td class="table-actions">
+                            <button class="btn btn-primary btn-sm" onclick="verLicencia(${licencia.id})">Ver</button>
+                            <button class="btn btn-danger btn-sm" onclick="revocarLicencia(${licencia.id})">Revocar</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function cargarTablaLicencias(filtro = 'todas') {
+            const tbody = document.getElementById('tablaLicencias');
+            
+            if (licencias.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted">No hay licencias registradas</td></tr>';
+                return;
+            }
+            
+            let licenciasFiltradas = licencias;
+            const hoy = new Date();
+            
+            if (filtro === 'activas') {
+                licenciasFiltradas = licencias.filter(l => l.estado === 'activa' && new Date(l.fechaExpiracion) >= hoy);
+            } else if (filtro === 'expiradas') {
+                licenciasFiltradas = licencias.filter(l => new Date(l.fechaExpiracion) < hoy);
+            } else if (filtro === 'revocadas') {
+                licenciasFiltradas = licencias.filter(l => l.estado === 'revocada');
+            }
+            
+            if (licenciasFiltradas.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted">No hay licencias ${filtro}</td></tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = licenciasFiltradas.map(licencia => {
+                const fechaExpiracion = new Date(licencia.fechaExpiracion);
+                const expirada = fechaExpiracion < hoy;
+                
+                return `
+                    <tr>
+                        <td style="font-family: monospace; font-size: 0.8rem;">${licencia.clave}</td>
+                        <td>${licencia.cliente.nombre}</td>
+                        <td>${licencia.producto.nombre}</td>
+                        <td><span class="badge badge-info">${licencia.tipo}</span></td>
+                        <td>${new Date(licencia.fechaEmision).toLocaleDateString()}</td>
+                        <td>${licencia.fechaExpiracion}</td>
+                        <td><span class="badge badge-${expirada ? 'danger' : licencia.estado === 'revocada' ? 'danger' : 'success'}">${expirada ? 'Expirada' : licencia.estado}</span></td>
+                        <td class="table-actions">
+                            <button class="btn btn-primary btn-sm" onclick="verLicencia(${licencia.id})">Ver</button>
+                            <button class="btn btn-success btn-sm" onclick="enviarLicencia(${licencia.id})">Enviar</button>
+                            <button class="btn btn-danger btn-sm" onclick="revocarLicencia(${licencia.id})">Revocar</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function actualizarEstadisticas() {
+            const hoy = new Date();
+            
+            // Estadísticas del dashboard
+            document.getElementById('totalLicencias').textContent = licencias.length;
+            document.getElementById('totalClientes').textContent = clientes.length;
+            
+            const licenciasActivas = licencias.filter(l => l.estado === 'activa' && new Date(l.fechaExpiracion) >= hoy).length;
+            const licenciasExpiradas = licencias.filter(l => new Date(l.fechaExpiracion) < hoy).length;
+            
+            document.getElementById('licenciasActivas').textContent = licenciasActivas;
+            document.getElementById('licenciasExpiradas').textContent = licenciasExpiradas;
+        }
+
+        function verLicencia(id) {
+            const licencia = licencias.find(l => l.id === id);
+            if (!licencia) return;
+            
+            const previewHTML = generarPreviewLicenciaCompleta(licencia);
+            document.getElementById('licenciaPreview').innerHTML = previewHTML;
+            mostrarModal('modalPreview');
+        }
+
+        function generarPreviewLicenciaCompleta(licencia) {
+            const fechaExpiracion = new Date(licencia.fechaExpiracion);
+            const hoy = new Date();
+            const expirada = fechaExpiracion < hoy;
+            
+            return `
+                <div class="license-header">
+                    <div class="license-company">
+                        <h2>CHAPAMARKET</h2>
+                        <p>Create Studio Digital</p>
+                        <p>ING. César Sánchez</p>
+                        <p>Key Manager Pro</p>
+                    </div>
+                    <div class="license-details">
+                        <h1>LICENCIA DE SOFTWARE</h1>
+                        <p><strong>Tipo:</strong> ${licencia.tipo.toUpperCase()}</p>
+                        <p><strong>Fecha:</strong> ${licencia.fechaEmision}</p>
+                        <p><span class="badge badge-${expirada ? 'danger' : licencia.estado === 'revocada' ? 'danger' : 'success'}">${expirada ? 'Expirada' : licencia.estado}</span></p>
+                    </div>
+                </div>
+                
+                <div class="license-client">
+                    <h3>Licenciado a:</h3>
+                    <p><strong>${licencia.cliente.nombre}</strong></p>
+                    <p>Email: ${licencia.cliente.email}</p>
+                    <p>Empresa: ${licencia.cliente.empresa}</p>
+                </div>
+                
+                <div class="license-client">
+                    <h3>Producto:</h3>
+                    <p><strong>${licencia.producto.nombre} v${licencia.producto.version}</strong></p>
+                    <p>${licencia.producto.descripcion}</p>
+                </div>
+                
+                <div class="license-key">
+                    ${licencia.clave}
+                </div>
+                
+                <div class="license-client">
+                    <h3>Detalles de la Licencia:</h3>
+                    <p><strong>Fecha de Emisión:</strong> ${licencia.fechaEmision}</p>
+                    <p><strong>Fecha de Expiración:</strong> ${licencia.fechaExpiracion}</p>
+                    <p><strong>Estado:</strong> ${expirada ? 'Expirada' : licencia.estado}</p>
+                    ${licencia.notas ? `<p><strong>Notas:</strong> ${licencia.notas}</p>` : ''}
+                </div>
+                
+                <div class="license-footer">
+                    <p>Esta licencia es válida únicamente para el usuario especificado</p>
+                    <p>Create Studio Digital - WhatsApp: 773-108-6826 o 763-109-3925</p>
+                </div>
+            `;
+        }
+
+        function enviarLicencia(id) {
+            const licencia = licencias.find(l => l.id === id);
+            if (!licencia) return;
+            
+            mostrarLoader();
+            
+            setTimeout(() => {
+                ocultarLoader();
+                mostrarAlerta(`Licencia enviada a ${licencia.cliente.email}`, 'success');
+            }, 2000);
+        }
+
+        function revocarLicencia(id) {
+            if (!confirm('¿Está seguro de revocar esta licencia?')) return;
+            
+            const index = licencias.findIndex(l => l.id === id);
+            if (index === -1) return;
+            
+            mostrarLoader();
+            
+            setTimeout(() => {
+                licencias[index].estado = 'revocada';
+                localStorage.setItem('keymanager_licencias', JSON.stringify(licencias));
+                
+                ocultarLoader();
+                mostrarAlerta('Licencia revocada exitosamente', 'success');
+                cargarTablaLicencias();
+                actualizarEstadisticas();
+            }, 2000);
+        }
+
+        function imprimirLicencia() {
+            window.print();
+        }
+
+        function descargarLicencia() {
+            mostrarAlerta('Descargando licencia en PDF...', 'info');
+            setTimeout(() => {
+                mostrarAlerta('Licencia descargada exitosamente', 'success');
+            }, 2000);
+        }
+
+        function contactarSoporte() {
+            const mensaje = encodeURIComponent("Hola, necesito soporte técnico para CHAPAMARKET Key Manager Pro.");
+            window.open(`https://wa.me/5217731086826?text=${mensaje}`, '_blank');
+        }
+    </script>
+</body>
+</html>
