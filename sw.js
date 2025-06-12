@@ -5,12 +5,10 @@ const DYNAMIC_CACHE = "chapamarket-dynamic-v1.0.0"
 // Archivos para cachear inmediatamente
 const STATIC_FILES = [
   "/",
-  "/index.html",
   "/manifest.json",
   "/assets/logo-createstudio.png",
   "/assets/chapamarket-logo.png",
   "/assets/favicon.ico",
-  "/app/",
   "/offline.html",
 ]
 
