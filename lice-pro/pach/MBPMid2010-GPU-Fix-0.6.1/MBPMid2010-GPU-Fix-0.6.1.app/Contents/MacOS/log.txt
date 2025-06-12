@@ -1,7 +1,0 @@
- | Checking compatibility
- MBPModelVersion :  MacBookPro6,2 ➔ Compatibility : OK ✓
-  | macOS version : 
- macOS 10.13
-  | Checking SIP Status
- SIP Disabled
- 
