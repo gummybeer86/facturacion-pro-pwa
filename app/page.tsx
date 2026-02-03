@@ -142,7 +142,7 @@ export default function HomePage() {
                     <div className="flex items-center mb-6">
                       <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl shadow-lg flex items-center justify-center mr-4">
                         <img
-                          src="/images/logo del programa facturacion.pro.png"
+                          src="/images/facturacion.pro.png"
                           alt="ChapaMarket Logo"
                           className="w-10 h-10"
                         />
@@ -201,7 +201,7 @@ export default function HomePage() {
                   <div className="relative">
                     <div className="bg-gradient-to-br from-slate-700/50 to-slate-800/50 rounded-2xl p-6 backdrop-blur-sm border border-slate-600/30">
                       <img
-                        src="/images/facturas-pro.png"
+                        src="/images/facturas.pro.png"
                         alt="ChapaMarket Facturación Pro"
                         className="w-full h-auto rounded-xl shadow-2xl"
                       />
